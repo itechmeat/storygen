@@ -19,10 +19,6 @@
   color: var(--color-text-alt);
   font-size: 24px;
   font-weight: bold;
-
-  @media (max-width: 480px) {
-    display: none;
-  }
 }
 
 .menu,
@@ -41,10 +37,4 @@
 
 .space {
   flex: 1;
-}
-
-.burger {
-  @media (min-width: 800px) {
-    display: none;
-  }
 }
