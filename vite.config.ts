@@ -1,5 +1,5 @@
 import react from '@vitejs/plugin-react'
-// import { URL, fileURLToPath } from 'url'
+import { URL, fileURLToPath } from 'url'
 import { defineConfig } from 'vite'
 
 // import mkcert from 'vite-plugin-mkcert'
@@ -18,26 +18,26 @@ export default defineConfig({
     //   registerType: 'autoUpdate',
     // }),
   ],
-  // resolve: {
-  //   alias: [
-  //     {
-  //       find: '@',
-  //       replacement: fileURLToPath(new URL('./src', import.meta.url)),
-  //     },
-  //     {
-  //       find: '@assets',
-  //       replacement: fileURLToPath(new URL('./src/assets', import.meta.url)),
-  //     },
-  //     {
-  //       find: '@styles',
-  //       replacement: fileURLToPath(new URL('./src/styles', import.meta.url)),
-  //     },
-  //   ],
-  // },
+  resolve: {
+    alias: [
+      {
+        find: '@',
+        replacement: fileURLToPath(new URL('./src', import.meta.url)),
+      },
+      {
+        find: '@assets',
+        replacement: fileURLToPath(new URL('./src/assets', import.meta.url)),
+      },
+      {
+        find: '@styles',
+        replacement: fileURLToPath(new URL('./src/styles', import.meta.url)),
+      },
+    ],
+  },
   server: {
     host: true,
     port: 8976,
   },
-  // envDir: 'env',
-  // envPrefix: ['VITE_'],
+  envDir: 'env',
+  envPrefix: ['VITE_'],
 })
