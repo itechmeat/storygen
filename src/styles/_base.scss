@@ -1,0 +1,27 @@
+html {
+  -webkit-text-size-adjust: 100%;
+
+  *::-webkit-scrollbar {
+    border-radius: 0;
+    width: 0;
+  }
+}
+
+body {
+  min-width: var(--device-min-size);
+  height: -webkit-fill-available;
+  min-height: 100vh;
+  margin: 0;
+  padding: 0;
+  background: var(--color-background);
+  color: var(--color-text);
+  font-family: var(--font-family);
+  font-size: var(--font-size-base);
+  font-weight: var(--font-medium);
+  line-height: 1.15;
+  overscroll-behavior: contain;
+}
+
+a {
+  color: var(--color-link);
+}

@@ -1,0 +1,44 @@
+.header {
+  flex: 0 0 auto;
+  width: 100%;
+  background: var(--color-primary);
+  color: var(--color-text-alt);
+}
+
+.wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  height: 60px;
+  padding: 0 var(--space-base);
+}
+
+.logo {
+  flex: 0 0 auto;
+  color: var(--color-text-alt);
+  font-size: 24px;
+  font-weight: bold;
+
+  @media (max-width: 480px) {
+    display: none;
+  }
+}
+
+.menu {
+  color: var(--color-text-alt);
+}
+
+.inner {
+  flex: 0 0 auto;
+}
+
+.space {
+  flex: 1;
+}
+
+.burger {
+  @media (min-width: 800px) {
+    display: none;
+  }
+}

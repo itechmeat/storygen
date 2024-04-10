@@ -1,0 +1,13 @@
+:root {
+  color-scheme: light dark;
+  --color-primary: #2445a0;
+  --color-success: #67dda0;
+  --color-warning: #ed7360;
+  --color-danger: #ea4359;
+  --color-border: #838383;
+  --color-text: var(--theme-color-text, #333);
+  --color-text-alt: var(--theme-color-text, #fff);
+  --color-hint: var(--theme-color-hint, #999);
+  --color-link: var(--theme-color-link, #2445a0);
+  --color-background: var(--theme-background-color, #ececec);
+}
