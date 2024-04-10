@@ -25,8 +25,14 @@
   }
 }
 
-.menu {
+.menu,
+.activeMenu {
+  flex: 0 0 auto;
   color: var(--color-text-alt);
+}
+
+.activeMenu {
+  color: var(--color-success);
 }
 
 .inner {

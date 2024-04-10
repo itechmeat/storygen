@@ -5,6 +5,6 @@ export enum ClogColor {
 }
 
 export const clog = (name: string, text?: string | null, color: ClogColor = ClogColor.SUCCESS) => {
-  console.log(`%c ${name} `, `background: #222; color: ${color}`)
+  console.log(`%c ${name.toUpperCase()}: `, `background: #222; color: ${color}`)
   console.log(text ? text : '- nothing in the answer -')
 }

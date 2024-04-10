@@ -15,9 +15,18 @@ export const Headline: FC<PropsWithChildren<Props>> = ({ navSlot, children }) =>
         <NavLink to="/" className={styles.logo}>
           StoryGen
         </NavLink>
-        {navSlot}
-        <NavLink to="/openai" className={styles.menu}>
+        <div className={styles.space} />
+        <NavLink
+          to="/openai"
+          className={({ isActive }) => (isActive ? styles.activeMenu : styles.menu)}
+        >
           Open AI
+        </NavLink>
+        <NavLink
+          to="/together"
+          className={({ isActive }) => (isActive ? styles.activeMenu : styles.menu)}
+        >
+          Together AI
         </NavLink>
         {navSlot}
         <div className={styles.space} />
