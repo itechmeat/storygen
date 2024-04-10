@@ -1,8 +1,10 @@
 import { useCallback, useState } from 'react'
+import { FileSearchOutlined } from '@ant-design/icons'
 import { Button, Form } from 'antd'
 import TextArea from 'antd/es/input/TextArea'
 import OpenAI from 'openai'
 import ReactMarkdown from 'react-markdown'
+import { Heading } from '../components/Heading/Heading'
 import { Spinner } from '../components/Spinner/Spinner'
 import { clog } from '../utils/common.utils'
 
@@ -12,7 +14,9 @@ const client = new OpenAI({
 })
 
 export const OpenAIPage = () => {
-  const [systemMessage, setSystemMessage] = useState("You're skilled frontend developer")
+  const [systemMessage, setSystemMessage] = useState(
+    "You're skilled frontend developer. Give an answer in the markdown mode.",
+  )
   const [prompt, setPrompt] = useState('What is the SOLID, DRY and KISS?')
   const [isLoading, setIsLoading] = useState(false)
   const [answer, setAnswer] = useState('')
@@ -35,6 +39,7 @@ export const OpenAIPage = () => {
           },
         ],
         model: 'gpt-3.5-turbo',
+        max_tokens: 500,
       })
 
       const result = response.choices[0].message.content
@@ -53,7 +58,21 @@ export const OpenAIPage = () => {
 
   return (
     <div style={{ position: 'relative', paddingBlock: '20px' }}>
-      <h1>Open AI tests</h1>
+      <Heading
+        actions={
+          <>
+            <Button
+              href="https://platform.openai.com/docs/quickstart?context=node"
+              target="_blank"
+              icon={<FileSearchOutlined />}
+            >
+              Documentation
+            </Button>
+          </>
+        }
+      >
+        Open AI tests
+      </Heading>
 
       <Form
         layout="vertical"
