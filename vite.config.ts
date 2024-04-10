@@ -1,22 +1,21 @@
 import react from '@vitejs/plugin-react'
 import { URL, fileURLToPath } from 'url'
 import { defineConfig } from 'vite'
-
-// import mkcert from 'vite-plugin-mkcert'
-// import { VitePWA } from 'vite-plugin-pwa'
-// import tsconfigPaths from 'vite-tsconfig-paths'
+import mkcert from 'vite-plugin-mkcert'
+import { VitePWA } from 'vite-plugin-pwa'
+import tsconfigPaths from 'vite-tsconfig-paths'
 
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [
     react(),
-    // tsconfigPaths({
-    //   parseNative: false,
-    // }),
-    // mkcert(),
-    // VitePWA({
-    //   registerType: 'autoUpdate',
-    // }),
+    tsconfigPaths({
+      parseNative: false,
+    }),
+    mkcert(),
+    VitePWA({
+      registerType: 'autoUpdate',
+    }),
   ],
   resolve: {
     alias: [
@@ -36,7 +35,7 @@ export default defineConfig({
   },
   server: {
     host: true,
-    port: 8976,
+    port: 4380,
   },
   envDir: 'env',
   envPrefix: ['VITE_'],
