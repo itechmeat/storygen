@@ -11,9 +11,13 @@ type Props = {
 export const Headline: FC<PropsWithChildren<Props>> = ({ navSlot, children }) => {
   return (
     <header className={styles.header}>
-      <Container>
+      <Container className={styles.wrapper}>
         <NavLink to="/" className={styles.logo}>
           StoryGen
+        </NavLink>
+        {navSlot}
+        <NavLink to="/openai" className={styles.menu}>
+          Open AI
         </NavLink>
         {navSlot}
         <div className={styles.space} />
