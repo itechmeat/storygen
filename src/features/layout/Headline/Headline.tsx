@@ -1,55 +1,56 @@
-import { FC, PropsWithChildren, ReactNode } from 'react'
+import { FC, PropsWithChildren } from 'react'
 import { FileTextOutlined } from '@ant-design/icons'
-import { Button } from 'antd'
-import { NavLink } from 'react-router-dom'
+import { Button, Menu } from 'antd'
+import { Header } from 'antd/es/layout/layout'
+import { MenuInfo } from 'rc-menu/lib/interface'
+import { NavLink, useLocation, useNavigate } from 'react-router-dom'
 import { clearDatabase } from '../../../api/db'
 import { Container } from '../../../components/Container/Container'
 import styles from './Headline.module.scss'
 
-type Props = {
-  navSlot?: ReactNode
-  userSlot?: ReactNode
-}
+export const Headline: FC<PropsWithChildren> = () => {
+  const navigate = useNavigate()
+  const { pathname } = useLocation()
 
-export const Headline: FC<PropsWithChildren<Props>> = ({ navSlot, children }) => {
-  const menu = [
+  const items = [
     {
-      to: '/openai',
-      name: 'Open AI',
+      key: '/openai',
+      label: 'Open AI',
     },
     {
-      to: '/together',
-      name: 'Together AI',
+      key: '/together',
+      label: 'Together AI',
     },
     {
-      to: '/stories',
-      name: 'Stories',
+      key: '/stories',
+      label: 'Stories',
     },
   ]
 
+  const handleMenuClick = (val: MenuInfo) => {
+    console.log('🚀 ~ handleMenuClick ~ val:', val)
+    navigate(val.key)
+  }
+
   return (
-    <header className={styles.header}>
+    <Header className={styles.header}>
       <Container className={styles.wrapper}>
         <NavLink to="/" className={styles.logo}>
           <FileTextOutlined />
           StoryGen
         </NavLink>
-        <div className={styles.space} />
-        {menu.map((item, index) => (
-          <NavLink
-            key={index}
-            to={item.to}
-            className={({ isActive }) => (isActive ? styles.activeMenu : styles.menu)}
-          >
-            {item.name}
-          </NavLink>
-        ))}
-        {navSlot}
-        <div className={styles.space} />
-        {children && <div className={styles.inner}>{children}</div>}
-        <div className={styles.space} />
+
+        <Menu
+          className={styles.menu}
+          theme="dark"
+          mode="horizontal"
+          defaultSelectedKeys={[pathname]}
+          items={items}
+          onClick={val => handleMenuClick(val)}
+        />
+
         <Button onClick={clearDatabase}>Clear Database</Button>
       </Container>
-    </header>
+    </Header>
   )
 }
