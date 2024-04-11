@@ -2,7 +2,12 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: var(--space-base);
   margin: var(--space-large) 0 var(--space-big);
+
+  &.centered {
+    justify-content: center;
+  }
 }
 
 .h1 {
