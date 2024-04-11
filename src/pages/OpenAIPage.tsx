@@ -57,7 +57,7 @@ export const OpenAIPage = () => {
   }, [prompt, systemMessage])
 
   return (
-    <div style={{ position: 'relative', paddingBlock: '20px' }}>
+    <>
       <Heading
         actions={
           <>
@@ -105,6 +105,6 @@ export const OpenAIPage = () => {
           <ReactMarkdown>{answer}</ReactMarkdown>
         </>
       )}
-    </div>
+    </>
   )
 }

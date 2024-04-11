@@ -9,6 +9,21 @@ type Props = {
 }
 
 export const Headline: FC<PropsWithChildren<Props>> = ({ navSlot, children }) => {
+  const menu = [
+    {
+      to: '/openai',
+      name: 'Open AI',
+    },
+    {
+      to: '/together',
+      name: 'Together AI',
+    },
+    {
+      to: '/stories',
+      name: 'Stories',
+    },
+  ]
+
   return (
     <header className={styles.header}>
       <Container className={styles.wrapper}>
@@ -16,18 +31,15 @@ export const Headline: FC<PropsWithChildren<Props>> = ({ navSlot, children }) =>
           StoryGen
         </NavLink>
         <div className={styles.space} />
-        <NavLink
-          to="/openai"
-          className={({ isActive }) => (isActive ? styles.activeMenu : styles.menu)}
-        >
-          Open AI
-        </NavLink>
-        <NavLink
-          to="/together"
-          className={({ isActive }) => (isActive ? styles.activeMenu : styles.menu)}
-        >
-          Together AI
-        </NavLink>
+        {menu.map((item, index) => (
+          <NavLink
+            key={index}
+            to={item.to}
+            className={({ isActive }) => (isActive ? styles.activeMenu : styles.menu)}
+          >
+            {item.name}
+          </NavLink>
+        ))}
         {navSlot}
         <div className={styles.space} />
         {children && <div className={styles.inner}>{children}</div>}

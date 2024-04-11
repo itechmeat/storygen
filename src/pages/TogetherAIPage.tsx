@@ -41,7 +41,7 @@ export const TogetherAIPage = () => {
   }, [fetchChatGPTResponse, prompt])
 
   return (
-    <div style={{ position: 'relative', paddingBlock: '20px' }}>
+    <>
       <Heading
         actions={
           <div>
@@ -121,6 +121,6 @@ export const TogetherAIPage = () => {
           <ReactMarkdown>{answer}</ReactMarkdown>
         </>
       )}
-    </div>
+    </>
   )
 }
