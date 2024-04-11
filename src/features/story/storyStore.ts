@@ -64,9 +64,7 @@ export const useStoryStore = create<StoryState>()(
       try {
         set(state => ({
           stories: state.stories.map(story =>
-            story.id === storyId
-              ? { ...story, ...updatedFields, updatedAt: new Date().toISOString() }
-              : story,
+            story.id === storyId ? { ...story, ...updatedFields } : story,
           ),
         }))
         await localDB.stories.update(storyId, updatedFields)

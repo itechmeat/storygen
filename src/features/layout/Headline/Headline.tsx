@@ -28,7 +28,6 @@ export const Headline: FC<PropsWithChildren> = () => {
   ]
 
   const handleMenuClick = (val: MenuInfo) => {
-    console.log('🚀 ~ handleMenuClick ~ val:', val)
     navigate(val.key)
   }
 
