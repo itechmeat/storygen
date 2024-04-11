@@ -3,12 +3,13 @@ import { Heading } from '../../../components/Heading/Heading'
 import { Spinner } from '../../../components/Spinner/Spinner'
 import { StoryForm } from '../StoryForm/StoryForm'
 import { StoryResponse } from '../StoryResponse/StoryResponse'
-import { IStory, StoryOptions } from '../type'
+import { IStory, ShortScene, StoryOptions } from '../type'
 import styles from './Story.module.scss'
 
 type StoryProps = {
   story: IStory
   isStoryGenerating: boolean
+  formattedResponse: ShortScene[] | null
   onUpdate: (story: IStory) => void
   onStoryGenerate: (story: IStory) => void
   onStoryCancel: () => void
@@ -18,6 +19,7 @@ type StoryProps = {
 export const Story: FC<StoryProps> = ({
   story,
   isStoryGenerating,
+  formattedResponse,
   onUpdate,
   onStoryGenerate,
   onStoryCancel,
@@ -45,11 +47,11 @@ export const Story: FC<StoryProps> = ({
       <Heading isCentered title={story.title} onChange={handleTitleUpdate} />
 
       <div className={styles.content}>
-        {!story.response ? (
+        {!formattedResponse ? (
           <StoryForm story={story} onGenerate={handleStoryGenerate} />
         ) : (
           <StoryResponse
-            response={story.response}
+            response={formattedResponse}
             onCancel={onStoryCancel}
             onGenerate={onScenesGenerate}
           />

@@ -51,3 +51,8 @@ export type IStory = StoryOptions & {
   cover?: string
   response?: string
 }
+
+export type ShortScene = {
+  title: string
+  description: string
+}
