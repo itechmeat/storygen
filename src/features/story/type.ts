@@ -47,9 +47,11 @@ export type IStory = StoryOptions & {
   title: string
   description: string
   summary: string
+  summary_en: string
   sceneIds: UUID[]
   cover?: string
   response?: string
+  names?: string[]
 }
 
 export type ShortScene = {

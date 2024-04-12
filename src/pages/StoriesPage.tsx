@@ -24,6 +24,7 @@ export const StoriesPage = () => {
       description: '',
       prompt: '',
       summary: '',
+      summary_en: '',
       sceneIds: [],
     })
   }

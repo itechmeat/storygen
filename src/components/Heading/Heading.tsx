@@ -25,6 +25,10 @@ export const Heading: FC<PropsWithChildren<Props>> = ({
   const [isEditing, setIsEditing] = useState(false)
 
   useEffect(() => {
+    setValue(title)
+  }, [title])
+
+  useEffect(() => {
     if (isEditing) {
       inputRef.current!.focus({
         cursor: 'all',
@@ -57,7 +61,6 @@ export const Heading: FC<PropsWithChildren<Props>> = ({
           onBlur={handleBlur}
         />
       )}
-      {actions}
       {onChange && !isEditing && (
         <Button
           type="text"
@@ -66,6 +69,7 @@ export const Heading: FC<PropsWithChildren<Props>> = ({
           onClick={() => setIsEditing(true)}
         />
       )}
+      {actions}
     </header>
   )
 }
