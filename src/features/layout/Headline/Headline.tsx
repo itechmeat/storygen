@@ -22,6 +22,10 @@ export const Headline: FC<PropsWithChildren> = () => {
       label: 'Together AI',
     },
     {
+      key: '/dall-e-3',
+      label: 'DALL·E 3',
+    },
+    {
       key: '/stories',
       label: 'Stories',
     },

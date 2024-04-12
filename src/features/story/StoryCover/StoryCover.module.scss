@@ -1,0 +1,33 @@
+.cover {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  width: 400px;
+  height: 400px;
+  margin: 0 auto var(--space-big);
+  background: var(--color-border);
+}
+
+.image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  vertical-align: bottom;
+}
+
+.generator {
+  padding: 0 var(--space-big);
+}
+
+.actions {
+  display: flex;
+  justify-content: center;
+  gap: var(--space-base);
+}
+
+.clear {
+  position: absolute;
+  top: var(--space-base);
+  right: var(--space-base);
+}

@@ -1,7 +1,7 @@
 import { useCallback, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { v4 as uuidv4 } from 'uuid'
-import { Language, askGPT } from '../api/gpt'
+import { AIImageModel, Language, askGPT, askGPTImage } from '../api/gpt'
 import { useSceneStore } from '../features/scene/sceneStore'
 import { IScene } from '../features/scene/type'
 import { Story } from '../features/story/Story/Story'
@@ -228,7 +228,7 @@ export const StoryPage = () => {
       switch (story.lang) {
         case Language.Russian:
           return `
-            У меня написанвъа такая история:
+            У меня написана такая история:
             ---
             ${context}
             ---
@@ -242,16 +242,16 @@ export const StoryPage = () => {
             `
         default:
           return `
-            У меня написанвъа такая история:
+            I have this story written:
             ---
             ${context}
             ---
-            Напиши саммари для неё, от 300 до 500 символов.
-            А так же напиши короткое описание, от 100 до 120 символов.
-            А так же предложи 10 вариантов названия для истории.
-            Формат ответа сделай в JSON:
+            Write a summary for her, from 300 to 500 characters.
+            And also write a short description, from 100 to 120 characters.
+            Also, suggest 10 options for a title for the story.
+            Make the response format in JSON:
             {summary: '_summary_', summary_en: '_summary_', description: '_description_', names: ['name1', 'name2', ... 'name10']}
-            В ответе не должно быть ничего, кроме этого JSON.
+            The response should contain nothing other than this JSON.
           `
       }
     }
@@ -288,6 +288,54 @@ export const StoryPage = () => {
     return response
   }
 
+  const handleCoverGenerate = async (model: AIImageModel) => {
+    if (!story?.summary) return
+
+    const definePrompt = () => {
+      switch (story.lang) {
+        case Language.Russian:
+          return `
+            У меня написана такая история:
+            ---
+            ${story.summary_en}
+            ---
+            Мне нужно придумать для этой истории.
+            Сгенерируй эту обложку, пропорции картинки - квадрат.
+            Название истории - ${story.title}, напиши это название вверху.
+            Так же внизу напиши короткий слоган - ${story.description}
+          `
+        default:
+          return `
+            I have this story written:
+            ---
+            ${story.summary_en}
+            ---
+            I need to come up with an idea for this story.
+            Generate this cover, the proportions of the image are square.
+            The title of the story is ${story.title}, write this title at the top.
+            Also write a short slogan below - ${story.description}
+          `
+      }
+    }
+
+    const isOpenAiExtended = model === AIImageModel.OpenAIDallE3
+    const baseOptions = {
+      model: model,
+      prompt: definePrompt(),
+      n: 1,
+    }
+    const openAiOptions = {
+      size: '1024x1024',
+      quality: 'standard',
+    }
+    const options = isOpenAiExtended ? { ...baseOptions, ...openAiOptions } : baseOptions
+    const response = await askGPTImage(options)
+    const imageData = response?.[0]
+    await updateStory(story.id, {
+      cover: imageData?.b64_json ? `data:image/png;base64, ${imageData?.b64_json}` : imageData?.url,
+    })
+  }
+
   if (!story) return <div>Story not found</div>
 
   return (
@@ -300,6 +348,7 @@ export const StoryPage = () => {
       onStoryCancel={() => handleUpdate({ ...story, response: '' })}
       onScenesGenerate={handleScenesGenerate}
       onMetaGenerate={handleMetaGenerate}
+      onCoverGenerate={handleCoverGenerate}
     />
   )
 }

@@ -1,4 +1,5 @@
 import OpenAI from 'openai'
+import { ImageGenerateParams } from 'openai/resources/images.mjs'
 import { StoryOptions } from '../features/story/type'
 import { clog } from '../utils/common.utils'
 
@@ -30,6 +31,28 @@ export const GPTModelList = new Map([
   [GPTModel.GoogleGemma7BInstruct, 'Google Gemma Instruct (7B)'],
   [GPTModel.GoogleGemma7BInstruct, 'Google Gemma Instruct (7B)'],
   [GPTModel.QwenChat72B, 'Qwen 1.5 Chat (72B)'],
+])
+
+export enum AIImageModel {
+  OpenAIDallE2 = 'dall-e-2',
+  OpenAIDallE3 = 'dall-e-3',
+  Openjourney4 = 'prompthero/openjourney',
+  RunwayStableDiffusion = 'runwayml/stable-diffusion-v1-5',
+  RealisticVision = 'SG161222/Realistic_Vision_V3.0_VAE',
+  StableDiffusion2 = 'stabilityai/stable-diffusion-2-1',
+  StableDiffusionXL = 'stabilityai/stable-diffusion-xl-base-1.0',
+  AnalogDiffusion = 'wavymulder/Analog-Diffusion',
+}
+
+export const AIImageModelList = new Map([
+  [AIImageModel.OpenAIDallE2, 'OpenAI DALL·E 2'],
+  [AIImageModel.OpenAIDallE3, 'OpenAI DALL·E 3'],
+  [AIImageModel.Openjourney4, 'Prompt Hero	Openjourney v4'],
+  [AIImageModel.RunwayStableDiffusion, 'Runway ML	Stable Diffusion 1.5'],
+  [AIImageModel.RealisticVision, 'Realistic Vision 3.0'],
+  [AIImageModel.StableDiffusion2, 'Stable Diffusion 2.1'],
+  [AIImageModel.StableDiffusionXL, 'Stable Diffusion XL 1.0'],
+  [AIImageModel.AnalogDiffusion, 'Analog Diffusion'],
 ])
 
 export enum Language {
@@ -74,6 +97,17 @@ export const askGPT = async (options: StoryOptions) => {
     clog('ANSWER', result)
 
     return result
+  } catch (error) {
+    console.error(error)
+  }
+}
+
+export const askGPTImage = async (options: ImageGenerateParams) => {
+  const client = options.model?.startsWith('dall-e') ? openAiClient : togetherClient
+  try {
+    const response = await client.images.generate(options)
+
+    return response.data
   } catch (error) {
     console.error(error)
   }

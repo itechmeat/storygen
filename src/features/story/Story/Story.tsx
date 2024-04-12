@@ -1,11 +1,13 @@
 import { FC, useCallback, useMemo } from 'react'
 import { UnorderedListOutlined } from '@ant-design/icons'
 import { Button, Dropdown, MenuProps } from 'antd'
+import { AIImageModel } from '../../../api/gpt'
 import { Heading } from '../../../components/Heading/Heading'
 import { Spinner } from '../../../components/Spinner/Spinner'
 import { ScenesList } from '../../scene/ScenesList/ScenesList'
 import { useSceneStore } from '../../scene/sceneStore'
 import { IScene } from '../../scene/type'
+import { StoryCover } from '../StoryCover/StoryCover'
 import { StoryForm } from '../StoryForm/StoryForm'
 import { StoryMeta } from '../StoryMeta/StoryMeta'
 import { StoryResponse } from '../StoryResponse/StoryResponse'
@@ -21,6 +23,7 @@ type StoryProps = {
   onStoryCancel: () => void
   onScenesGenerate: () => void
   onMetaGenerate: (context: string) => void
+  onCoverGenerate: (model: AIImageModel) => void
 }
 
 export const Story: FC<StoryProps> = ({
@@ -32,6 +35,7 @@ export const Story: FC<StoryProps> = ({
   onStoryCancel,
   onScenesGenerate,
   onMetaGenerate,
+  onCoverGenerate,
 }) => {
   const { getSceneById } = useSceneStore()
 
@@ -113,6 +117,7 @@ export const Story: FC<StoryProps> = ({
         </div>
       ) : (
         <>
+          {story.summary && <StoryCover story={story} onGenerate={onCoverGenerate} />}
           <StoryMeta story={story} onGenerate={handleMetaGenerate} />
           <ScenesList list={scenesList} />
         </>
