@@ -15,3 +15,13 @@
   font-size: var(--font-base);
   font-style: italic;
 }
+
+.form {
+  display: flex;
+  align-items: center;
+  gap: var(--space-base);
+}
+
+.field {
+  margin: 0;
+}

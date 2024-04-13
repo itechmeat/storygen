@@ -1,8 +1,7 @@
-import { FC, useEffect, useState } from 'react'
+import { FC, useState } from 'react'
 import { DeleteOutlined } from '@ant-design/icons'
 import { Button, Form, Select } from 'antd'
 import { AIImageModel, AIImageModelList } from '../../../api/gpt'
-import { Spinner } from '../../../components/Spinner/Spinner'
 import { IStory } from '../type'
 import styles from './StoryCover.module.scss'
 
@@ -14,17 +13,9 @@ type Props = {
 export const StoryCover: FC<Props> = ({ story, onGenerate }) => {
   const [isChanging, setIsChanging] = useState(false)
   const [isStarted, setIsStarted] = useState(false)
-  const [isLoading, setIsLoading] = useState(false)
   const [model, setModel] = useState<AIImageModel>(AIImageModel.AnalogDiffusion)
 
-  useEffect(() => {
-    if (story.cover) {
-      setIsLoading(false)
-    }
-  }, [story.cover])
-
   const handleSubmit = () => {
-    setIsLoading(true)
     setIsChanging(false)
     onGenerate(model)
   }
@@ -67,8 +58,6 @@ export const StoryCover: FC<Props> = ({ story, onGenerate }) => {
                     </Button>
                   </div>
                 </Form.Item>
-
-                {isLoading && <Spinner />}
               </Form>
             </div>
           ) : (

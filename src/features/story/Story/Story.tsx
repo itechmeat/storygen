@@ -1,7 +1,7 @@
 import { FC, useCallback, useMemo } from 'react'
 import { UnorderedListOutlined } from '@ant-design/icons'
 import { Button, Dropdown, MenuProps } from 'antd'
-import { AIImageModel } from '../../../api/gpt'
+import { AIImageModel, GPTModel } from '../../../api/gpt'
 import { Heading } from '../../../components/Heading/Heading'
 import { Spinner } from '../../../components/Spinner/Spinner'
 import { ScenesList } from '../../scene/ScenesList/ScenesList'
@@ -22,7 +22,7 @@ type StoryProps = {
   onStoryGenerate: (story: IStory) => void
   onStoryCancel: () => void
   onScenesGenerate: () => void
-  onMetaGenerate: (context: string) => void
+  onMetaGenerate: (model: GPTModel, context: string) => void
   onCoverGenerate: (model: AIImageModel) => void
 }
 
@@ -65,10 +65,10 @@ export const Story: FC<StoryProps> = ({
     [onStoryGenerate, onUpdate, story],
   )
 
-  const handleMetaGenerate = () => {
+  const handleMetaGenerate = (model: GPTModel) => {
     const context = scenesList.map(scene => scene.summary).join('\n')
     if (context) {
-      onMetaGenerate(context)
+      onMetaGenerate(model, context)
     }
   }
 

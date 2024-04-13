@@ -1,7 +1,7 @@
 import { useCallback, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { v4 as uuidv4 } from 'uuid'
-import { AIImageModel, Language, askGPT, askGPTImage } from '../api/gpt'
+import { AIImageModel, GPTModel, Language, askGPT, askGPTImage } from '../api/gpt'
 import { useSceneStore } from '../features/scene/sceneStore'
 import { IScene } from '../features/scene/type'
 import { Story } from '../features/story/Story/Story'
@@ -210,7 +210,7 @@ export const StoryPage = () => {
     await updateStory(story.id, { ...story, sceneIds: scenes.map(item => item.id) })
   }
 
-  const handleMetaGenerate = async (context: string) => {
+  const handleMetaGenerate = async (model: GPTModel, context: string) => {
     if (!story) return
 
     setIsStoryGenerating(true)
@@ -260,7 +260,7 @@ export const StoryPage = () => {
       systemMessage: defineConfig(),
       prompt: definePrompt(),
       lang: story.lang,
-      model: story.model,
+      model: model || story.model,
     }
 
     clog('Request', JSON.stringify(request))
@@ -290,6 +290,12 @@ export const StoryPage = () => {
 
   const handleCoverGenerate = async (model: AIImageModel) => {
     if (!story?.summary) return
+
+    setIsStoryGenerating(true)
+
+    await updateStory(story.id, {
+      cover: '',
+    })
 
     const definePrompt = () => {
       switch (story.lang) {
@@ -334,6 +340,8 @@ export const StoryPage = () => {
     await updateStory(story.id, {
       cover: imageData?.b64_json ? `data:image/png;base64, ${imageData?.b64_json}` : imageData?.url,
     })
+
+    setIsStoryGenerating(false)
   }
 
   if (!story) return <div>Story not found</div>

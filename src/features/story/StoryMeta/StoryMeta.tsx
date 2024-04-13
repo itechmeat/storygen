@@ -1,16 +1,19 @@
-import { FC } from 'react'
-import { Button } from 'antd'
+import { FC, useState } from 'react'
+import { Button, Form, Select } from 'antd'
+import { GPTModel, GPTModelList } from '../../../api/gpt'
 import { useStoryStore } from '../storyStore'
 import { IStory } from '../type'
 import styles from './StoryMeta.module.scss'
 
 type Props = {
   story: IStory
-  onGenerate: () => void
+  onGenerate: (model: GPTModel) => void
 }
 
 export const StoryMeta: FC<Props> = ({ story, onGenerate }) => {
   const { updateStory } = useStoryStore()
+
+  const [model, setModel] = useState<GPTModel>(story.model || GPTModel.Mistral8x7BInstruct)
 
   const tmpClear = async () => {
     const update = {
@@ -40,7 +43,28 @@ export const StoryMeta: FC<Props> = ({ story, onGenerate }) => {
         </div>
       ) : (
         <div className={styles.generator}>
-          <Button onClick={onGenerate}>Generate Meta Data</Button>
+          <Form
+            className={styles.form}
+            layout="vertical"
+            initialValues={{
+              promptValue: prompt,
+              modelValue: model,
+            }}
+          >
+            <Form.Item className={styles.field}>
+              <Button onClick={() => onGenerate(model)}>Generate Meta Data</Button>
+            </Form.Item>
+
+            <span>with</span>
+
+            <Form.Item name="modelValue" className={styles.field}>
+              <Select
+                style={{ width: 300 }}
+                options={Array.from(GPTModelList, ([value, label]) => ({ value, label }))}
+                onChange={val => setModel(val)}
+              />
+            </Form.Item>
+          </Form>
         </div>
       )}
     </div>
