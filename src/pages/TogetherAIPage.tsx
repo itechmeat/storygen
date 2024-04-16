@@ -3,45 +3,66 @@ import { FileSearchOutlined, UnorderedListOutlined } from '@ant-design/icons'
 import { Button, Form, Select } from 'antd'
 import TextArea from 'antd/es/input/TextArea'
 import ReactMarkdown from 'react-markdown'
-import { GPTModel, GPTModelList, Language, askGPT } from '../api/gpt'
+import { AITextModel, AITextModelList, Language, askGPT } from '../api/gpt'
 import { Heading } from '../components/Heading/Heading'
 import { Spinner } from '../components/Spinner/Spinner'
+import { UserKeysProvider } from '../features/user/UserKeysProvider/UserKeysProvider'
+import { useCheckKeys } from '../features/user/hooks/check-keys.hook'
 
 export const TogetherAIPage = () => {
+  const { getKey, requiredKey, setRequiredKey } = useCheckKeys()
+
   const [systemMessage, setSystemMessage] = useState(
     "You're skilled BackEnd developer. Give an answer in the markdown mode.",
   )
   const [prompt, setPrompt] = useState('What do you need to do to become a FrontEnd developer?')
   const [lang, setLang] = useState<Language>(Language.English)
-  const [model, setModel] = useState<GPTModel>(GPTModel.Mistral8x7BInstruct)
+  const [model, setModel] = useState<AITextModel>(AITextModel.Mistral8x7BInstruct)
   const [isLoading, setIsLoading] = useState(false)
   const [answer, setAnswer] = useState('')
 
   const fetchAIResponse = useCallback(
-    async (inputText: string) => {
-      return await askGPT({
-        systemMessage: systemMessage,
-        prompt: inputText,
-        lang: lang,
-        model: model,
-      })
+    async (inputText: string, localKey?: string) => {
+      return await askGPT(
+        {
+          systemMessage: systemMessage,
+          prompt: inputText,
+          lang,
+          model,
+        },
+        localKey || getKey(model as AITextModel),
+      )
     },
-    [lang, model, systemMessage],
+    [getKey, lang, model, systemMessage],
   )
 
-  const handleSubmit = useCallback(async () => {
-    if (!prompt) return
-    setIsLoading(true)
+  const handleSubmit = useCallback(
+    async (localKey?: string) => {
+      if (!prompt) return
 
-    const chatGPTResponse = await fetchAIResponse(prompt)
-    if (chatGPTResponse) {
-      setAnswer(chatGPTResponse)
+      const chatGPTResponse = await fetchAIResponse(prompt, localKey)
+      if (chatGPTResponse) {
+        setAnswer(chatGPTResponse)
+      }
+      setIsLoading(false)
+    },
+    [fetchAIResponse, prompt],
+  )
+
+  const handleOk = (localKey: string) => {
+    setRequiredKey(null)
+    if (prompt) {
+      handleSubmit(localKey)
     }
+  }
+
+  const handleCancel = () => {
+    setRequiredKey(null)
     setIsLoading(false)
-  }, [fetchAIResponse, prompt])
+  }
 
   return (
-    <>
+    <UserKeysProvider requiredKey={requiredKey} onOk={handleOk} onClose={handleCancel}>
       <Heading
         actions={
           <div>
@@ -101,13 +122,13 @@ export const TogetherAIPage = () => {
         <Form.Item label="Model" name="modelValue">
           <Select
             style={{ width: 300 }}
-            options={Array.from(GPTModelList, ([value, label]) => ({ value, label }))}
+            options={Array.from(AITextModelList, ([value, label]) => ({ value, label }))}
             onChange={val => setModel(val)}
           />
         </Form.Item>
 
         <Form.Item>
-          <Button type="primary" onClick={handleSubmit}>
+          <Button type="primary" onClick={() => handleSubmit()}>
             Ask TogetherAI
           </Button>
         </Form.Item>
@@ -121,6 +142,6 @@ export const TogetherAIPage = () => {
           <ReactMarkdown>{answer}</ReactMarkdown>
         </>
       )}
-    </>
+    </UserKeysProvider>
   )
 }

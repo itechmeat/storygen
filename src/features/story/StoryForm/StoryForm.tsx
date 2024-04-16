@@ -1,7 +1,7 @@
 import { FC, useCallback, useState } from 'react'
 import { Button, Form, InputNumber, Select } from 'antd'
 import TextArea from 'antd/es/input/TextArea'
-import { GPTModel, GPTModelList, Language } from '../../../api/gpt'
+import { AITextModel, AITextModelList, Language } from '../../../api/gpt'
 import { IStory, StoryAudience, StoryGenre, StoryOptions, StoryWriter } from '../type'
 import styles from './StoryForm.module.scss'
 
@@ -13,7 +13,7 @@ type Props = {
 export const StoryForm: FC<Props> = ({ story, onGenerate }) => {
   const [prompt, setPrompt] = useState(story.prompt || '')
   const [lang, setLang] = useState<Language>(story.lang || Language.Russian)
-  const [model, setModel] = useState<GPTModel>(story.model || GPTModel.Mistral8x7BInstruct)
+  const [model, setModel] = useState<AITextModel>(story.model || AITextModel.Mistral8x7BInstruct)
   const [scenesNum, setScenesNum] = useState<number>(story.scenesNum || 5)
   const [writer, setWriter] = useState<StoryWriter | string | undefined>(story.writer)
   const [genre, setGenre] = useState<StoryGenre | undefined>(story.genre)
@@ -72,7 +72,7 @@ export const StoryForm: FC<Props> = ({ story, onGenerate }) => {
         <Form.Item label="Model" name="modelValue">
           <Select
             style={{ width: 300 }}
-            options={Array.from(GPTModelList, ([value, label]) => ({ value, label }))}
+            options={Array.from(AITextModelList, ([value, label]) => ({ value, label }))}
             onChange={val => setModel(val)}
           />
         </Form.Item>

@@ -1,10 +1,18 @@
+.header {
+  padding: 0;
+}
+
 .wrapper {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 20px;
+  gap: var(--space-big);
   height: 60px;
   padding: 0 var(--space-base);
+
+  @media (max-width: 800px) {
+    gap: var(--space-base);
+  }
 }
 
 .logo {
@@ -14,8 +22,24 @@
   color: var(--color-text-alt);
   font-size: 24px;
   font-weight: var(--font-medium);
+
+  @media (max-width: 800px) {
+    font-size: 16px;
+  }
 }
 
 .menu {
   flex: 1;
+  max-width: calc(100% - 300px);
+
+  @media (max-width: 800px) {
+    max-width: calc(100% - 160px);
+    margin-right: auto;
+  }
+}
+
+.clearText {
+  @media (max-width: 800px) {
+    display: none !important;
+  }
 }

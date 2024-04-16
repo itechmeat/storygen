@@ -1,6 +1,6 @@
 .list {
-  display: flex;
-  flex-wrap: wrap;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
   gap: var(--space-big);
   margin-block-end: var(--space-big);
 }

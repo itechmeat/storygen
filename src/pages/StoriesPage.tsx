@@ -35,17 +35,27 @@ export const StoriesPage = () => {
 
   return (
     <>
-      <Heading
-        actions={
-          <Button type="primary" icon={<PlusOutlined />} onClick={() => setIsCreateModalOpen(true)}>
-            Create new story
-          </Button>
-        }
-      >
-        Your Stories
-      </Heading>
+      {storiesList?.length > 0 && (
+        <Heading
+          actions={
+            <Button
+              type="primary"
+              icon={<PlusOutlined />}
+              onClick={() => setIsCreateModalOpen(true)}
+            >
+              Create new story
+            </Button>
+          }
+        >
+          Your Stories
+        </Heading>
+      )}
 
-      <StoriesList list={storiesList} onStoryDelete={id => handleStoryDelete(id)} />
+      <StoriesList
+        list={storiesList}
+        onStart={() => setIsCreateModalOpen(true)}
+        onStoryDelete={id => handleStoryDelete(id)}
+      />
 
       <StoryCreateModal
         isOpen={isCreateModalOpen}

@@ -1,5 +1,5 @@
 import { Language } from '../api/gpt'
-import { IStory, ShortScene } from '../features/story/type'
+import { CompactShortScene, IStory } from '../features/story/type'
 
 export const getWriterStyle = (story: IStory) => {
   switch (story.lang) {
@@ -43,41 +43,124 @@ export const getAudience = (story: IStory) => {
 export const getStoryTask = (story: IStory, size = 30000) => {
   switch (story.lang) {
     case Language.Russian:
-      return `Твоя задача - по описанию из промпта составить список из ${story.scenesNum} эпизодов, которые будут описывать историю. Размер каждого эпизода не менее ${size / Number(story.scenesNum)} символов.`
+      return `Твоя задача - по описанию из промпта составить список из ${story.scenesNum} эпизодов, которые будут описывать историю.`
     default:
       return `Your task is to create a list of ${story.scenesNum} episodes based on the prompt's description that will narrate the story. The size of each episode is at least ${size / Number(story.scenesNum)} characters.`
   }
 }
 
-export const formatResponse = (response: string): ShortScene[] => {
-  return response
-    .split('<c>')
-    .slice(1)
-    .map(scene => {
-      let title, description
-      const titleMatch = scene.match(/<t>(.*?)<\/t>/)
-      const descriptionMatch = scene.match(/<d>(.*?)<\/d>/)
-
-      if (titleMatch && descriptionMatch) {
-        title = titleMatch[1]
-        description = descriptionMatch[1]
-      } else {
-        title = 'Untitled Chapter'
-        description = scene.split('</c><d>')[1]?.split('</d>')[0] || 'No description provided' // Attempt to extract description
-      }
-
-      return { title, description }
-    })
-}
-
-export const buildScenePrompt = (story: IStory, response: ShortScene[], num: number): string => {
+export const buildScenePrompt = (
+  story: IStory,
+  response: CompactShortScene[],
+  num: number,
+): string => {
   const prefix = story.lang === Language.Russian ? 'Эпизод' : 'Scene'
   const config =
     story.lang === Language.Russian
       ? `Максимально подробно напиши эпизод №${num + 1}`
       : `Write episode number ${num + 1} in as much detail as possible`
   const content = response
-    .map((scene, index) => `${prefix} ${index + 1}: ${scene.title}\n${scene.description}\n\n`)
+    .map((scene, index) => `${prefix} ${index + 1}: ${scene.t}\n${scene.d}\n\n`)
     .join('')
   return `${content}\n${config}`
+}
+
+export const extractArrayFromString = (text?: string) => {
+  if (!text) return null
+
+  if (typeof text === 'object') {
+    return text
+  }
+
+  const WRONG_RESULT = 'Wrong result'
+  const OBJECTS_LINE_PATTERN = '}{'
+  const OBJECTS_N_PATTERN = '}\n{'
+  const OBJECTS_FINAL_PATTERN = '},{'
+
+  let isObjects = false
+
+  let startIndex = text.indexOf('[')
+  if (startIndex === -1) {
+    startIndex = text.indexOf('{')
+    if (startIndex !== -1 && !text.includes('"summary')) {
+      isObjects = true
+    }
+  }
+  if (startIndex === -1) {
+    return WRONG_RESULT
+  }
+
+  let endIndex = text.indexOf(']', startIndex)
+  if (endIndex === -1) {
+    endIndex = text.lastIndexOf('}')
+  }
+  if (endIndex === -1) {
+    return WRONG_RESULT
+  }
+
+  let jsonString = text.substring(startIndex, endIndex + 1)
+  if (isObjects) {
+    if (text.indexOf(OBJECTS_LINE_PATTERN) !== -1) {
+      jsonString = jsonString.split(OBJECTS_LINE_PATTERN).join(OBJECTS_FINAL_PATTERN)
+    }
+    if (text.indexOf(OBJECTS_N_PATTERN) !== -1) {
+      jsonString = `[${jsonString.split(OBJECTS_N_PATTERN).join(OBJECTS_FINAL_PATTERN)}]`
+    }
+  }
+
+  try {
+    return JSON.parse(jsonString)
+  } catch (error) {
+    return WRONG_RESULT
+  }
+}
+
+export const extractObjectFromString = (text?: string) => {
+  if (!text) return null
+
+  if (typeof text === 'object') {
+    return text
+  }
+
+  const WRONG_RESULT = 'Wrong result'
+
+  const startIndex = text.indexOf('{')
+  if (startIndex === -1) {
+    return WRONG_RESULT
+  }
+
+  const endIndex = text.indexOf('}', startIndex)
+  if (endIndex === -1) {
+    return WRONG_RESULT
+  }
+
+  const jsonString = text.substring(startIndex, endIndex + 1)
+
+  try {
+    return JSON.parse(jsonString)
+  } catch (error) {
+    return WRONG_RESULT
+  }
+}
+
+export const formatResponse = (response: string): CompactShortScene[] => {
+  return extractArrayFromString(response)
+  // return response
+  //   .split('<c>')
+  //   .slice(1)
+  //   .map(scene => {
+  //     let title, description
+  //     const titleMatch = scene.match(/<t>(.*?)<\/t>/)
+  //     const descriptionMatch = scene.match(/<d>(.*?)<\/d>/)
+
+  //     if (titleMatch && descriptionMatch) {
+  //       title = titleMatch[1]
+  //       description = descriptionMatch[1]
+  //     } else {
+  //       title = 'Untitled Chapter'
+  //       description = scene.split('</c><d>')[1]?.split('</d>')[0] || 'No description provided' // Attempt to extract description
+  //     }
+
+  //     return { title, description }
+  //   })
 }

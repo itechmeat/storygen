@@ -1,8 +1,8 @@
 import { FC, useState } from 'react'
 import { Button, Form, Select } from 'antd'
 import { AITextModel, AITextModelList } from '../../../api/gpt'
-import { useStoryStore } from '../storyStore'
-import { IStory } from '../type'
+import { useStoryStore } from '../../story/storyStore'
+import { IStory } from '../../story/type'
 import styles from './StoryMeta.module.scss'
 
 type Props = {

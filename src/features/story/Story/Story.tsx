@@ -1,7 +1,7 @@
 import { FC, useCallback, useMemo } from 'react'
 import { UnorderedListOutlined } from '@ant-design/icons'
 import { Button, Dropdown, MenuProps } from 'antd'
-import { AIImageModel, GPTModel } from '../../../api/gpt'
+import { AIImageModel, AITextModel } from '../../../api/gpt'
 import { Heading } from '../../../components/Heading/Heading'
 import { Spinner } from '../../../components/Spinner/Spinner'
 import { ScenesList } from '../../scene/ScenesList/ScenesList'
@@ -11,18 +11,18 @@ import { StoryCover } from '../StoryCover/StoryCover'
 import { StoryForm } from '../StoryForm/StoryForm'
 import { StoryMeta } from '../StoryMeta/StoryMeta'
 import { StoryResponse } from '../StoryResponse/StoryResponse'
-import { IStory, ShortScene, StoryOptions } from '../type'
+import { CompactShortScene, IStory, StoryOptions } from '../type'
 import styles from './Story.module.scss'
 
 type StoryProps = {
   story: IStory
   isStoryGenerating: boolean
-  formattedResponse: ShortScene[] | null
+  formattedResponse: CompactShortScene[] | null
   onUpdate: (story: IStory) => void
   onStoryGenerate: (story: IStory) => void
   onStoryCancel: () => void
   onScenesGenerate: () => void
-  onMetaGenerate: (model: GPTModel, context: string) => void
+  onMetaGenerate: (model: AITextModel, context: string) => void
   onCoverGenerate: (model: AIImageModel) => void
 }
 
@@ -65,7 +65,7 @@ export const Story: FC<StoryProps> = ({
     [onStoryGenerate, onUpdate, story],
   )
 
-  const handleMetaGenerate = (model: GPTModel) => {
+  const handleMetaGenerate = (model: AITextModel) => {
     const context = scenesList.map(scene => scene.summary).join('\n')
     if (context) {
       onMetaGenerate(model, context)
