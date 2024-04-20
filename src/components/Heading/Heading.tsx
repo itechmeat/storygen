@@ -70,6 +70,14 @@ export const Heading: FC<PropsWithChildren<Props>> = ({
         />
       )}
       {actions}
+      {onChange && !isEditing && (
+        <Button
+          type="text"
+          icon={<EditOutlined />}
+          className={styles.edit}
+          onClick={() => setIsEditing(true)}
+        />
+      )}
     </header>
   )
 }
