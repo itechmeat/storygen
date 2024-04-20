@@ -2,6 +2,7 @@ import { FC, Suspense } from 'react'
 import { Route, Routes } from 'react-router-dom'
 import { HomePage } from './pages/HomePage'
 import { NotFoundPage } from './pages/NotFoundPage'
+import { OpenAIImagePage } from './pages/OpenAIImagePage'
 import { OpenAIPage } from './pages/OpenAIPage'
 import { StoriesPage } from './pages/StoriesPage'
 import { StoryPage } from './pages/StoryPage'
@@ -14,6 +15,7 @@ export const Router: FC = () => {
         <Route index element={<HomePage />} />
         <Route path="openai" element={<OpenAIPage />} />
         <Route path="together" element={<TogetherAIPage />} />
+        <Route path="dall-e-3" element={<OpenAIImagePage />} />
 
         <Route path="stories">
           <Route index element={<StoriesPage />} />

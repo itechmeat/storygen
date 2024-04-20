@@ -1,19 +1,13 @@
 import { FC, PropsWithChildren, ReactNode, useEffect, useRef, useState } from 'react'
 import { EditOutlined } from '@ant-design/icons'
 import { Button, Input, InputRef } from 'antd'
-import { FC, PropsWithChildren, ReactNode, useEffect, useRef, useState } from 'react'
-import { EditOutlined } from '@ant-design/icons'
-import { Button, Input, InputRef } from 'antd'
 import cn from 'classnames'
 import styles from './Heading.module.scss'
 
 type Props = {
   actions?: ReactNode
   title?: string
-  title?: string
   className?: string
-  isCentered?: boolean
-  onChange?: (title: string) => void
   isCentered?: boolean
   onChange?: (title: string) => void
 }
