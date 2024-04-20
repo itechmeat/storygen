@@ -6,8 +6,6 @@ import { IStory } from './type'
 
 type StoryState = {
   stories: IStory[]
-  activeStoryId: UUID | null
-  editableStoryId: UUID | null
   fetchAllStories: () => Promise<IStory[] | undefined>
   fetchStoryById: (id: UUID) => Promise<IStory | undefined>
   createStory: (story: IStory) => Promise<IStory | undefined>
@@ -15,16 +13,12 @@ type StoryState = {
   deleteStory: (id: UUID) => void
   getAllStories: () => IStory[]
   getStoryById: (id?: UUID | null) => IStory | null
-  setActiveStoryId: (id: UUID | null) => void
-  setEditableStoryId: (id: UUID | null) => void
   clearDB: () => void
 }
 
 export const useStoryStore = create<StoryState>()(
   devtools((set, get) => ({
     stories: [],
-    activeStoryId: null,
-    editableStoryId: null,
     fetchAllStories: async () => {
       try {
         const stories = await localDB.stories.toArray()
@@ -98,12 +92,6 @@ export const useStoryStore = create<StoryState>()(
       if (!storyId) return null
       const { stories } = get()
       return stories.find(story => story.id === storyId) || null
-    },
-    setActiveStoryId: storyId => {
-      set({ activeStoryId: storyId })
-    },
-    setEditableStoryId: storyId => {
-      set({ editableStoryId: storyId })
     },
     clearDB: () => {
       clearDatabase()
