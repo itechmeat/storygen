@@ -47,6 +47,13 @@ const translation = {
     generatedScenes: 'Сгенерированные сцены для вашей истории',
     regenerate: 'Перегенерировать с новыми данными',
     generateFullStory: 'Сгенерировать полную историю',
+    generatingScene: 'Генерация эпизода',
+    removeScenes: 'Удалить сцены',
+    generateMetaData: 'Сгенерировать дополниельные данные',
+    generatingMetaData: 'Генерация дополниельные данных',
+    removeMetaData: 'Удалить дополниельные данные',
+    generateWith: 'с помощью',
+    generateCover: 'Сгенерировать обложку',
   },
   prompts: {
     writerVariant: {

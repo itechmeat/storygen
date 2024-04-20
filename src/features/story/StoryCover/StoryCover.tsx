@@ -1,16 +1,19 @@
 import { FC, useState } from 'react'
 import { DeleteOutlined } from '@ant-design/icons'
-import { Button, Form, Select } from 'antd'
+import { Button, Form, Select, Spin } from 'antd'
+import { useTranslation } from 'react-i18next'
 import { AIImageModel, AIImageModelList } from '../../../api/gpt'
 import { IStory } from '../type'
 import styles from './StoryCover.module.scss'
 
 type Props = {
   story: IStory
+  isGenerating: boolean
   onGenerate: (model: AIImageModel) => void
 }
 
-export const StoryCover: FC<Props> = ({ story, onGenerate }) => {
+export const StoryCover: FC<Props> = ({ story, isGenerating, onGenerate }) => {
+  const { t } = useTranslation()
   const [isChanging, setIsChanging] = useState(false)
   const [isStarted, setIsStarted] = useState(false)
   const [model, setModel] = useState<AIImageModel>(AIImageModel.RealisticVision)
@@ -18,6 +21,14 @@ export const StoryCover: FC<Props> = ({ story, onGenerate }) => {
   const handleSubmit = () => {
     setIsChanging(false)
     onGenerate(model)
+  }
+
+  if (isGenerating) {
+    return (
+      <div className={styles.cover}>
+        <Spin />
+      </div>
+    )
   }
 
   return (
@@ -61,7 +72,7 @@ export const StoryCover: FC<Props> = ({ story, onGenerate }) => {
               </Form>
             </div>
           ) : (
-            <Button onClick={() => setIsStarted(true)}>Generate Cover</Button>
+            <Button onClick={() => setIsStarted(true)}>{t('StoryPage.generateCover')}</Button>
           )}
         </div>
       )}

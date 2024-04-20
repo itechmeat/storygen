@@ -3,7 +3,6 @@ import { UnorderedListOutlined } from '@ant-design/icons'
 import { Button, Dropdown, MenuProps } from 'antd'
 import { AIImageModel, AITextModel } from '../../../api/gpt'
 import { Heading } from '../../../components/Heading/Heading'
-import { Spinner } from '../../../components/Spinner/Spinner'
 import { ScenesList } from '../../scene/ScenesList/ScenesList'
 import { useSceneStore } from '../../scene/sceneStore'
 import { IScene } from '../../scene/type'
@@ -11,12 +10,17 @@ import { StoryCover } from '../StoryCover/StoryCover'
 import { StoryForm } from '../StoryForm/StoryForm'
 import { StoryMeta } from '../StoryMeta/StoryMeta'
 import { StoryResponse } from '../StoryResponse/StoryResponse'
+import { StoryScenesActions } from '../StoryScenesActions/StoryScenesActions'
 import { CompactShortScene, IStory, StoryOptions } from '../type'
 import styles from './Story.module.scss'
 
 type StoryProps = {
   story: IStory
+  generatedScene: string | null
   isStoryGenerating: boolean
+  isSummaryGenerating: boolean
+  isMetaGenerating: boolean
+  isCoverGenerating: boolean
   formattedResponse: CompactShortScene[] | null
   onUpdate: (story: IStory) => void
   onStoryGenerate: (story: IStory) => void
@@ -28,7 +32,11 @@ type StoryProps = {
 
 export const Story: FC<StoryProps> = ({
   story,
+  generatedScene,
   isStoryGenerating,
+  isSummaryGenerating,
+  isMetaGenerating,
+  isCoverGenerating,
   formattedResponse,
   onUpdate,
   onStoryGenerate,
@@ -77,7 +85,11 @@ export const Story: FC<StoryProps> = ({
 
     const items: MenuProps['items'] = story.names.map((name, index) => ({
       key: index,
-      label: <span onClick={() => handleTitleUpdate(name)}>{name}</span>,
+      label: (
+        <span className={styles.nameOption} onClick={() => handleTitleUpdate(name)}>
+          {name}
+        </span>
+      ),
     }))
 
     return (
@@ -103,7 +115,7 @@ export const Story: FC<StoryProps> = ({
         actions={<NameSelector />}
       />
 
-      {!scenesList.length ? (
+      {!scenesList.length && !isStoryGenerating ? (
         <div className={styles.content}>
           {!formattedResponse ? (
             <StoryForm story={story} onGenerate={handleStoryGenerate} />
@@ -117,13 +129,31 @@ export const Story: FC<StoryProps> = ({
         </div>
       ) : (
         <>
-          {story.summary && <StoryCover story={story} onGenerate={onCoverGenerate} />}
-          <StoryMeta story={story} onGenerate={handleMetaGenerate} />
-          <ScenesList list={scenesList} />
+          {story.scenesNum === story.sceneIds.length && (
+            <>
+              {story.summary && (
+                <StoryCover
+                  story={story}
+                  isGenerating={isCoverGenerating}
+                  onGenerate={onCoverGenerate}
+                />
+              )}
+              <StoryMeta
+                story={story}
+                isGenerating={isMetaGenerating}
+                onGenerate={handleMetaGenerate}
+              />
+            </>
+          )}
+          <ScenesList
+            list={scenesList}
+            generatedScene={generatedScene}
+            isStoryGenerating={isStoryGenerating && story.scenesNum !== story.sceneIds.length}
+            isSummaryGenerating={isSummaryGenerating}
+          />
+          {story.scenesNum === story.sceneIds.length && <StoryScenesActions story={story} />}
         </>
       )}
-
-      {isStoryGenerating && <Spinner />}
     </article>
   )
 }
