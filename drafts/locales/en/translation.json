@@ -1,0 +1,44 @@
+{
+  "HomePage": {
+    "title": "Let's make up a new story!"
+  },
+  "StoryPage": {
+    "defaultTitle": "New Story",
+    "prompt": "Describe your story",
+    "model": "Model",
+    "writerStyle": "Writer's style",
+    "writers": {
+      "murakami": "Haruki Murakami",
+      "orwell": "George Orwell",
+      "kafka": "Franz Kafka",
+      "nabokov": "Vladimir Nabokov",
+      "king": "Stephen King",
+      "liuCixin": "Liu Cixin"
+    },
+    "ownStyle": "Your own style",
+    "genre": "Genre",
+    "genres": {
+      "fantasy": "Fantasy",
+      "scienceFiction": "Science Fiction",
+      "literaryFiction": "Literary Fiction",
+      "mystery": "Mystery",
+      "horror": "Horror",
+      "thriller": "Thriller",
+      "detective": "Detective",
+      "romance": "Romance",
+      "historicalFiction": "Historical Fiction",
+      "memoir": "Memoir"
+    },
+    "audience": "Audience",
+    "audiences": {
+      "children": "Children",
+      "teenagers": "Teenagers",
+      "youngAdults": "Young Adults",
+      "adults": "Adults",
+      "middleGrade": "Middle Grade",
+      "seniors": "Seniors"
+    },
+    "numberOfScenes": "Number of scenes",
+    "generateScenes": "Generate scenes"
+  }
+}

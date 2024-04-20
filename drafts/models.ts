@@ -1,0 +1,512 @@
+export enum Provider {
+  OPEN_AI = 'openai',
+  TOGETHER_AI = 'togetherai',
+}
+
+export type AICModel = {
+  name: string
+  code: string
+  provider: Provider
+  vote: 0 | 1 | 2 | 3 | 4 | 5
+  comment?: string
+}
+
+export type AIChatModel = AICModel & {
+  contextLength?: number
+}
+
+export type AIImageModelNew = AICModel
+
+export const chatModelsList: AIChatModel[] = [
+  {
+    name: 'ChatGPT 3.5 Turbo',
+    code: 'gpt-3.5-turbo',
+    provider: Provider.OPEN_AI,
+    contextLength: 55555555,
+    vote: 4,
+  },
+  {
+    name: '01-ai Yi Chat (34B)',
+    code: 'zero-one-ai/Yi-34B-Chat',
+    provider: Provider.OPEN_AI,
+    contextLength: 4096,
+    vote: 0,
+  },
+  {
+    name: 'OLMo Instruct (7B)',
+    code: 'allenai/OLMo-7B-Instruct',
+    provider: Provider.TOGETHER_AI,
+    contextLength: 2048,
+    vote: 1,
+  },
+  {
+    name: 'OLMo Twin-2T (7B)',
+    code: 'allenai/OLMo-7B-Twin-2T',
+    provider: Provider.TOGETHER_AI,
+    contextLength: 2048,
+    vote: 1,
+  },
+  {
+    name: 'OLMo (7B)',
+    code: 'allenai/OLMo-7B',
+    provider: Provider.TOGETHER_AI,
+    contextLength: 2048,
+    vote: 1,
+  },
+  {
+    name: 'Chronos Hermes (13B)',
+    code: 'Austism/chronos-hermes-13b',
+    provider: Provider.TOGETHER_AI,
+    contextLength: 2048,
+    vote: 1,
+  },
+  {
+    name: 'Dolphin 2.5 Mixtral 8x7b',
+    code: 'cognitivecomputations/dolphin-2.5-mixtral-8x7b',
+    provider: Provider.TOGETHER_AI,
+    contextLength: 32768,
+    vote: 1,
+    comment: 'Too slow',
+  },
+  {
+    name: 'DBRX Instruct',
+    code: 'databricks/dbrx-instruct',
+    provider: Provider.TOGETHER_AI,
+    contextLength: 32000,
+    vote: 1,
+  },
+  {
+    name: 'Deepseek Coder Instruct (33B)',
+    code: 'deepseek-ai/deepseek-coder-33b-instruct',
+    provider: Provider.TOGETHER_AI,
+    contextLength: 16384,
+    vote: 1,
+  },
+  {
+    name: 'DeepSeek LLM Chat (67B)',
+    code: 'deepseek-ai/deepseek-llm-67b-chat',
+    provider: Provider.TOGETHER_AI,
+    contextLength: 4096,
+    vote: 1,
+  },
+  {
+    name: 'Platypus2 Instruct (70B)',
+    code: 'garage-bAInd/Platypus2-70B-instruct',
+    provider: Provider.TOGETHER_AI,
+    contextLength: 4096,
+    vote: 0,
+  },
+  {
+    name: 'Google	Gemma Instruct (2B)',
+    code: 'google/gemma-2b-it',
+    provider: Provider.TOGETHER_AI,
+    contextLength: 8192,
+    vote: 1,
+  },
+  {
+    name: 'Google Gemma Instruct (7B)',
+    code: 'google/gemma-7b-it',
+    provider: Provider.TOGETHER_AI,
+    contextLength: 8192,
+    vote: 0,
+  },
+  {
+    name: 'MythoMax-L2 (13B)',
+    code: 'Gryphe/MythoMax-L2-13b',
+    provider: Provider.TOGETHER_AI,
+    contextLength: 4096,
+    vote: 0,
+  },
+  {
+    name: 'LM Sys	Vicuna v1.5 (13B)',
+    code: 'lmsys/vicuna-13b-v1.5',
+    provider: Provider.TOGETHER_AI,
+    contextLength: 4096,
+    vote: 0,
+  },
+  {
+    name: 'LM Sys	Vicuna v1.5 (7B)',
+    code: 'lmsys/vicuna-7b-v1.5',
+    provider: Provider.TOGETHER_AI,
+    contextLength: 4096,
+    vote: 0,
+  },
+  {
+    name: 'Meta	Code Llama Instruct (13B)',
+    code: 'codellama/CodeLlama-13b-Instruct-hf',
+    provider: Provider.TOGETHER_AI,
+    contextLength: 16384,
+    vote: 0,
+  },
+  {
+    name: 'Meta	Code Llama Instruct (34B)',
+    code: 'codellama/CodeLlama-34b-Instruct-hf',
+    provider: Provider.TOGETHER_AI,
+    contextLength: 16384,
+    vote: 0,
+  },
+  {
+    name: 'Meta	Code Llama Instruct (70B)',
+    code: 'codellama/CodeLlama-70b-Instruct-hf',
+    provider: Provider.TOGETHER_AI,
+    contextLength: 4096,
+    vote: 1,
+  },
+  {
+    name: 'Meta	Code Llama Instruct (7B)',
+    code: 'codellama/CodeLlama-7b-Instruct-hf',
+    provider: Provider.TOGETHER_AI,
+    contextLength: 16384,
+    vote: 0,
+  },
+  {
+    name: 'Meta	LLaMA-2 Chat (70B)',
+    code: 'meta-llama/Llama-2-70b-chat-hf',
+    provider: Provider.TOGETHER_AI,
+    contextLength: 4096,
+    vote: 0,
+  },
+  {
+    name: 'Meta	LLaMA-2 Chat (13B)',
+    code: 'meta-llama/Llama-2-13b-chat-hf',
+    provider: Provider.TOGETHER_AI,
+    contextLength: 4096,
+    vote: 0,
+  },
+  {
+    name: 'Meta	LLaMA-2 Chat (7B)',
+    code: 'meta-llama/Llama-2-7b-chat-hf',
+    provider: Provider.TOGETHER_AI,
+    contextLength: 4096,
+    vote: 0,
+  },
+  {
+    name: 'Mistral (7B) Instruct 0.1',
+    code: 'mistralai/Mistral-7B-Instruct-v0.1',
+    provider: Provider.TOGETHER_AI,
+    contextLength: 8192,
+    vote: 1,
+  },
+  {
+    name: 'Mistral (7B) Instruct 0.2',
+    code: 'mistralai/Mistral-7B-Instruct-v0.2',
+    provider: Provider.TOGETHER_AI,
+    contextLength: 32768,
+    vote: 0,
+  },
+  {
+    name: 'Mistral 8x7B Instruct (46.7B)',
+    code: 'mistralai/Mixtral-8x7B-Instruct-v0.1',
+    provider: Provider.TOGETHER_AI,
+    contextLength: 32768,
+    vote: 0,
+  },
+  {
+    name: 'Nous Capybara v1.9 (7B)',
+    code: 'NousResearch/Nous-Capybara-7B-V1p9',
+    provider: Provider.TOGETHER_AI,
+    contextLength: 8192,
+    vote: 0,
+  },
+  {
+    name: 'Nous Hermes 2 - Mistral DPO (7B)',
+    code: 'NousResearch/Nous-Hermes-2-Mistral-7B-DPO',
+    provider: Provider.TOGETHER_AI,
+    contextLength: 32768,
+    vote: 0,
+  },
+  {
+    name: 'Nous Hermes 2 - Mistral 8x7B-DPO (46.7B)',
+    code: 'NousResearch/Nous-Hermes-2-Mixtral-8x7B-DPO',
+    provider: Provider.TOGETHER_AI,
+    contextLength: 32768,
+    vote: 0,
+  },
+  {
+    name: 'Nous Hermes 2 - Mistral 8x7B-SFT (46.7B)',
+    code: 'NousResearch/Nous-Hermes-2-Mixtral-8x7B-SFT',
+    provider: Provider.TOGETHER_AI,
+    contextLength: 32768,
+    vote: 0,
+  },
+  {
+    name: 'Nous Hermes LLaMA-2 (7B)',
+    code: 'NousResearch/Nous-Hermes-llama-2-7b',
+    provider: Provider.TOGETHER_AI,
+    contextLength: 4096,
+    vote: 1,
+  },
+  {
+    name: 'Nous Hermes LLaMA-2 (13B)',
+    code: 'NousResearch/Nous-Hermes-Llama2-13b',
+    provider: Provider.TOGETHER_AI,
+    contextLength: 4096,
+    vote: 0,
+  },
+  {
+    name: 'Nous Hermes-2 Yi (34B)',
+    code: 'NousResearch/Nous-Hermes-2-Yi-34B',
+    provider: Provider.TOGETHER_AI,
+    contextLength: 4096,
+    vote: 0,
+  },
+  {
+    name: 'OpenChat 3.5 (7B)',
+    code: 'openchat/openchat-3.5-1210',
+    provider: Provider.TOGETHER_AI,
+    contextLength: 8192,
+    vote: 0,
+  },
+  {
+    name: 'OpenOrca Mistral (7B) 8K',
+    code: 'Open-Orca/Mistral-7B-OpenOrca',
+    provider: Provider.TOGETHER_AI,
+    contextLength: 8192,
+    vote: 0,
+  },
+  {
+    name: 'Qwen 1.5 Chat (0.5B)',
+    code: 'Qwen/Qwen1.5-0.5B-Chat',
+    provider: Provider.TOGETHER_AI,
+    contextLength: 32768,
+    vote: 1,
+  },
+  {
+    name: 'Qwen 1.5 Chat (1.5B)',
+    code: 'Qwen/Qwen1.5-1.8B-Chat',
+    provider: Provider.TOGETHER_AI,
+    contextLength: 32768,
+    vote: 1,
+  },
+  {
+    name: 'Qwen 1.5 Chat (4B)',
+    code: 'Qwen/Qwen1.5-4B-Chat',
+    provider: Provider.TOGETHER_AI,
+    contextLength: 32768,
+    vote: 1,
+  },
+  {
+    name: 'Qwen 1.5 Chat (7B)',
+    code: 'Qwen/Qwen1.5-7B-Chat',
+    provider: Provider.TOGETHER_AI,
+    contextLength: 32768,
+    vote: 0,
+  },
+  {
+    name: 'Qwen 1.5 Chat (14B)',
+    code: 'Qwen/Qwen1.5-14B-Chat',
+    provider: Provider.TOGETHER_AI,
+    contextLength: 32768,
+    vote: 0,
+  },
+  {
+    name: 'Qwen 1.5 Chat (32B)',
+    code: 'Qwen/Qwen1.5-32B-Chat',
+    provider: Provider.TOGETHER_AI,
+    contextLength: 32768,
+    vote: 0,
+  },
+  {
+    name: 'Qwen 1.5 Chat (72B)',
+    code: 'Qwen/Qwen1.5-72B-Chat',
+    provider: Provider.TOGETHER_AI,
+    contextLength: 32768,
+    vote: 0,
+  },
+  {
+    name: 'Snorkel Mistral PairRM DPO (7B)',
+    code: 'snorkelai/Snorkel-Mistral-PairRM-DPO',
+    provider: Provider.TOGETHER_AI,
+    contextLength: 2048,
+    vote: 0,
+  },
+  {
+    name: 'Teknium OpenHermes-2-Mistral (7B)',
+    code: 'teknium/OpenHermes-2-Mistral-7B',
+    provider: Provider.TOGETHER_AI,
+    contextLength: 8192,
+    vote: 0,
+  },
+  {
+    name: 'Teknium OpenHermes-2.5-Mistral (7B)',
+    code: 'teknium/OpenHermes-2p5-Mistral-7B',
+    provider: Provider.TOGETHER_AI,
+    contextLength: 8192,
+    vote: 0,
+  },
+  {
+    name: 'Together	LLaMA-2-7B-32K-Instruct (7B)',
+    code: 'togethercomputer/Llama-2-7B-32K-Instruct',
+    provider: Provider.TOGETHER_AI,
+    contextLength: 32768,
+    vote: 1,
+  },
+  {
+    name: 'Together		RedPajama-INCITE Chat (3B)',
+    code: 'togethercomputer/RedPajama-INCITE-Chat-3B-v1',
+    provider: Provider.TOGETHER_AI,
+    contextLength: 2048,
+    vote: 1,
+  },
+  {
+    name: 'Together RedPajama-INCITE Chat (7B)',
+    code: 'togethercomputer/RedPajama-INCITE-7B-Chat',
+    provider: Provider.TOGETHER_AI,
+    contextLength: 2048,
+    vote: 1,
+  },
+  {
+    name: 'Undi95 ReMM SLERP L2 (13B)',
+    code: 'Undi95/ReMM-SLERP-L2-13B',
+    provider: Provider.TOGETHER_AI,
+    contextLength: 4096,
+    vote: 1,
+  },
+  {
+    name: 'Undi95 Toppy M (7B)',
+    code: 'Undi95/Toppy-M-7B',
+    provider: Provider.TOGETHER_AI,
+    contextLength: 4096,
+    vote: 0,
+  },
+  {
+    name: 'WizardLM v1.2 (13B)',
+    code: 'WizardLM/WizardLM-13B-V1.2',
+    provider: Provider.TOGETHER_AI,
+    contextLength: 4096,
+    vote: 0,
+  },
+  {
+    name: 'WizardLM v1.2 (13B)',
+    code: 'upstage/SOLAR-10.7B-Instruct-v1.0',
+    provider: Provider.TOGETHER_AI,
+    contextLength: 4096,
+    vote: 1,
+  },
+]
+
+export const imageModelsList: AIImageModelNew[] = [
+  {
+    name: 'OpenAI DALL·E 2',
+    code: 'dall-e-2',
+    provider: Provider.OPEN_AI,
+    vote: 0,
+  },
+  {
+    name: 'OpenAI DALL·E 3',
+    code: 'dall-e-3',
+    provider: Provider.OPEN_AI,
+    vote: 0,
+  },
+  {
+    name: 'Prompt Hero	Openjourney v4',
+    code: 'prompthero/openjourney',
+    provider: Provider.TOGETHER_AI,
+    vote: 0,
+  },
+  {
+    name: 'Runway ML	Stable Diffusion 1.5',
+    code: 'runwayml/stable-diffusion-v1-5',
+    provider: Provider.TOGETHER_AI,
+    vote: 0,
+  },
+  {
+    name: 'Realistic Vision 3.0',
+    code: 'SG161222/Realistic_Vision_V3.0_VAE',
+    provider: Provider.TOGETHER_AI,
+    vote: 0,
+  },
+  {
+    name: 'Stable Diffusion 2.1',
+    code: 'stabilityai/stable-diffusion-2-1',
+    provider: Provider.TOGETHER_AI,
+    vote: 0,
+  },
+  {
+    name: 'Stable Diffusion XL 1.0',
+    code: 'stabilityai/stable-diffusion-xl-base-1.0',
+    provider: Provider.TOGETHER_AI,
+    vote: 0,
+  },
+  {
+    name: 'Analog Diffusion',
+    code: 'CODECOwavymulder/Analog-DiffusionDECODE',
+    provider: Provider.TOGETHER_AI,
+    vote: 0,
+  },
+]
+
+export const imageModelsMap = new Map<string, AIImageModelNew>([
+  [
+    'dall-e-2',
+    {
+      name: 'OpenAI DALL·E 2',
+      code: 'dall-e-2',
+      provider: Provider.OPEN_AI,
+      vote: 0,
+    },
+  ],
+  [
+    'dall-e-3',
+    {
+      name: 'OpenAI DALL·E 3',
+      code: 'dall-e-3',
+      provider: Provider.OPEN_AI,
+      vote: 0,
+    },
+  ],
+  [
+    'prompthero/openjourney',
+    {
+      name: 'Prompt Hero Openjourney v4',
+      code: 'prompthero/openjourney',
+      provider: Provider.TOGETHER_AI,
+      vote: 0,
+    },
+  ],
+  [
+    'runwayml/stable-diffusion-v1-5',
+    {
+      name: 'Runway ML Stable Diffusion 1.5',
+      code: 'runwayml/stable-diffusion-v1-5',
+      provider: Provider.TOGETHER_AI,
+      vote: 0,
+    },
+  ],
+  [
+    'SG161222/Realistic_Vision_V3.0_VAE',
+    {
+      name: 'Realistic Vision 3.0',
+      code: 'SG161222/Realistic_Vision_V3.0_VAE',
+      provider: Provider.TOGETHER_AI,
+      vote: 0,
+    },
+  ],
+  [
+    'stabilityai/stable-diffusion-2-1',
+    {
+      name: 'Stable Diffusion 2.1',
+      code: 'stabilityai/stable-diffusion-2-1',
+      provider: Provider.TOGETHER_AI,
+      vote: 0,
+    },
+  ],
+  [
+    'stabilityai/stable-diffusion-xl-base-1.0',
+    {
+      name: 'Stable Diffusion XL 1.0',
+      code: 'stabilityai/stable-diffusion-xl-base-1.0',
+      provider: Provider.TOGETHER_AI,
+      vote: 0,
+    },
+  ],
+  [
+    'CODECOwavymulder/Analog-DiffusionDECODE',
+    {
+      name: 'Analog Diffusion',
+      code: 'CODECOwavymulder/Analog-DiffusionDECODE',
+      provider: Provider.TOGETHER_AI,
+      vote: 0,
+    },
+  ],
+])
