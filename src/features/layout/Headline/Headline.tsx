@@ -1,15 +1,19 @@
 import { FC, PropsWithChildren } from 'react'
-import { DeleteOutlined, FileTextOutlined } from '@ant-design/icons'
+import { DeleteOutlined } from '@ant-design/icons'
 import { Button, Menu, Popconfirm } from 'antd'
 import { Header } from 'antd/es/layout/layout'
 import { MenuInfo } from 'rc-menu/lib/interface'
+import { useTranslation } from 'react-i18next'
 import { NavLink, useLocation, useNavigate } from 'react-router-dom'
 import { useWindowSize } from 'react-use'
 import { clearDatabase } from '../../../api/db'
+import LogoIcon from '../../../assets/images/logo.svg'
 import { Container } from '../../../components/Container/Container'
+import { LanguageSelector } from '../../localization/LanguageSelector/LanguageSelector'
 import styles from './Headline.module.scss'
 
 export const Headline: FC<PropsWithChildren> = () => {
+  const { t } = useTranslation()
   const navigate = useNavigate()
   const { pathname } = useLocation()
 
@@ -30,7 +34,7 @@ export const Headline: FC<PropsWithChildren> = () => {
     },
     {
       key: '/stories',
-      label: 'Stories',
+      label: t('StoryPage.stories'),
     },
   ]
 
@@ -42,8 +46,8 @@ export const Headline: FC<PropsWithChildren> = () => {
     <Header className={styles.header}>
       <Container className={styles.wrapper}>
         <NavLink to="/" className={styles.logo}>
-          <FileTextOutlined />
-          StoryGen
+          <LogoIcon />
+          <span className={styles.logoText}>StoryGen</span>
         </NavLink>
 
         <Menu
@@ -57,20 +61,22 @@ export const Headline: FC<PropsWithChildren> = () => {
 
         <Popconfirm
           placement="bottom"
-          title="Are you sure to clear your local database?"
-          description="Once the database is deleted, you cannot undo this action"
-          okText="Yes"
-          cancelText="No"
+          title={t('notices.deleteDB')}
+          description={t('notices.deleteDBDescription')}
+          okText={t('actions.yes')}
+          cancelText={t('actions.no')}
           onConfirm={clearDatabase}
         >
           {width > 800 ? (
             <Button icon={<DeleteOutlined />}>
-              <span className={styles.clearText}>Clear Database</span>
+              <span className={styles.clearText}>{t('actions.clearDatabase')}</span>
             </Button>
           ) : (
             <Button icon={<DeleteOutlined />} />
           )}
         </Popconfirm>
+
+        <LanguageSelector />
       </Container>
     </Header>
   )

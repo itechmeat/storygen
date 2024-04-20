@@ -1,8 +1,10 @@
 import { useState } from 'react'
 import { PlusOutlined } from '@ant-design/icons'
 import { Button } from 'antd'
+import { useTranslation } from 'react-i18next'
 import { v4 as uuidv4 } from 'uuid'
 import { Heading } from '../components/Heading/Heading'
+import { useLanguage } from '../features/localization/hooks/language.hook'
 import { StoriesList } from '../features/story/StoriesList/StoriesList'
 import { StoryCreateModal } from '../features/story/StoryCreateModal/StoryCreateModal'
 import { useFetchAllStories } from '../features/story/hooks/fetch-stories.hook'
@@ -10,6 +12,9 @@ import { useStoryStore } from '../features/story/storyStore'
 import { UUID } from '../types/common'
 
 export const StoriesPage = () => {
+  const { t } = useTranslation()
+  const { currentLanguage } = useLanguage()
+
   useFetchAllStories()
   const { createStory, getAllStories, deleteStory } = useStoryStore()
 
@@ -26,6 +31,7 @@ export const StoriesPage = () => {
       summary: '',
       summary_en: '',
       sceneIds: [],
+      lang: currentLanguage,
     })
   }
 
@@ -43,11 +49,11 @@ export const StoriesPage = () => {
               icon={<PlusOutlined />}
               onClick={() => setIsCreateModalOpen(true)}
             >
-              Create new story
+              {t('StoryPage.createNewStory')}
             </Button>
           }
         >
-          Your Stories
+          {t('StoryPage.yourStories')}
         </Heading>
       )}
 

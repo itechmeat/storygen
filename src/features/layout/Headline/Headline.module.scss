@@ -18,14 +18,29 @@
 .logo {
   flex: 0 0 auto;
   display: flex;
+  align-items: center;
   gap: 8px;
-  color: var(--color-text-alt);
   font-size: 24px;
   font-weight: var(--font-medium);
+
+  &,
+  &:hover,
+  &:active {
+    color: var(--color-text-alt);
+  }
 
   @media (max-width: 800px) {
     font-size: 16px;
   }
+
+  svg {
+    width: 32px;
+    height: 32px;
+  }
+}
+
+.logoText {
+  flex: 0 0 auto;
 }
 
 .menu {

@@ -1,5 +1,6 @@
-import { FC, useState } from 'react'
+import { FC, useEffect, useState } from 'react'
 import { Input, Modal } from 'antd'
+import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router-dom'
 import { UUID } from '../../../types/common'
 import { IStory } from '../type'
@@ -12,10 +13,15 @@ type Props = {
 }
 
 export const StoryCreateModal: FC<Props> = ({ isOpen, onSubmit, onClose }) => {
+  const { t, i18n } = useTranslation()
   const navigate = useNavigate()
 
-  const [storyTitle, setStoryTitle] = useState('New Story')
+  const [storyTitle, setStoryTitle] = useState(t('StoryPage.defaultTitle') as string)
   const [confirmLoading, setConfirmLoading] = useState(false)
+
+  useEffect(() => {
+    setStoryTitle(t('StoryPage.defaultTitle'))
+  }, [i18n.language, t])
 
   const handleOk = async () => {
     setConfirmLoading(true)
@@ -33,10 +39,12 @@ export const StoryCreateModal: FC<Props> = ({ isOpen, onSubmit, onClose }) => {
 
   return (
     <Modal
-      title="Create your new story"
+      title={t('notices.createStory')}
       open={isOpen}
       confirmLoading={confirmLoading}
       okButtonProps={{ disabled: !storyTitle }}
+      okText={t('actions.ok')}
+      cancelText={t('actions.cancel')}
       onOk={handleOk}
       onCancel={onClose}
     >

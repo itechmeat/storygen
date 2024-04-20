@@ -2,21 +2,23 @@ import { useCallback, useState } from 'react'
 import { FileSearchOutlined, UnorderedListOutlined } from '@ant-design/icons'
 import { Button, Form, Select } from 'antd'
 import TextArea from 'antd/es/input/TextArea'
+import { useTranslation } from 'react-i18next'
 import ReactMarkdown from 'react-markdown'
-import { AITextModel, AITextModelList, Language, askGPT } from '../api/gpt'
+import { AITextModel, AITextModelList, askGPT } from '../api/gpt'
 import { Heading } from '../components/Heading/Heading'
 import { Spinner } from '../components/Spinner/Spinner'
+import { Language } from '../features/localization/types'
 import { UserKeysProvider } from '../features/user/UserKeysProvider/UserKeysProvider'
 import { useCheckKeys } from '../features/user/hooks/check-keys.hook'
 
 export const TogetherAIPage = () => {
+  const { i18n } = useTranslation()
   const { getKey, requiredKey, setRequiredKey } = useCheckKeys()
 
   const [systemMessage, setSystemMessage] = useState(
     "You're skilled BackEnd developer. Give an answer in the markdown mode.",
   )
   const [prompt, setPrompt] = useState('What do you need to do to become a FrontEnd developer?')
-  const [lang, setLang] = useState<Language>(Language.English)
   const [model, setModel] = useState<AITextModel>(AITextModel.Mistral8x7BInstruct)
   const [isLoading, setIsLoading] = useState(false)
   const [answer, setAnswer] = useState('')
@@ -27,13 +29,13 @@ export const TogetherAIPage = () => {
         {
           systemMessage: systemMessage,
           prompt: inputText,
-          lang,
+          lang: i18n.language as Language,
           model,
         },
         localKey || getKey(model as AITextModel),
       )
     },
-    [getKey, lang, model, systemMessage],
+    [getKey, i18n, model, systemMessage],
   )
 
   const handleSubmit = useCallback(
@@ -92,7 +94,6 @@ export const TogetherAIPage = () => {
         initialValues={{
           systemMessageValue: systemMessage,
           promptValue: prompt,
-          langValue: lang,
           modelValue: model,
         }}
       >
@@ -106,17 +107,6 @@ export const TogetherAIPage = () => {
 
         <Form.Item label="Prompt message" name="promptValue">
           <TextArea rows={2} value={prompt} onChange={e => setPrompt(e.target.value)} />
-        </Form.Item>
-
-        <Form.Item label="Response language" name="langValue">
-          <Select
-            style={{ width: 300 }}
-            options={[
-              { value: Language.English, label: 'English' },
-              { value: Language.Russian, label: 'Русский' },
-            ]}
-            onChange={val => setLang(val)}
-          />
         </Form.Item>
 
         <Form.Item label="Model" name="modelValue">

@@ -1,4 +1,5 @@
 import { FC, useState } from 'react'
+import { DeleteOutlined } from '@ant-design/icons'
 import { Button, Form, Select } from 'antd'
 import { AITextModel, AITextModelList } from '../../../api/gpt'
 import { useStoryStore } from '../storyStore'
@@ -28,10 +29,8 @@ export const StoryMeta: FC<Props> = ({ story, onGenerate }) => {
 
   return (
     <div className={styles.meta}>
-      {false && (
-        <Button type="primary" danger onClick={tmpClear}>
-          Clear
-        </Button>
+      {!false && story.summary && (
+        <Button type="primary" danger icon={<DeleteOutlined />} onClick={tmpClear} />
       )}
 
       {story.summary ? (

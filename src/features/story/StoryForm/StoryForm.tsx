@@ -1,7 +1,8 @@
 import { FC, useCallback, useState } from 'react'
 import { Button, Form, InputNumber, Select } from 'antd'
 import TextArea from 'antd/es/input/TextArea'
-import { AITextModel, AITextModelList, Language } from '../../../api/gpt'
+import { useTranslation } from 'react-i18next'
+import { AITextModel, AITextModelList } from '../../../api/gpt'
 import { IStory, StoryAudience, StoryGenre, StoryOptions, StoryWriter } from '../type'
 import styles from './StoryForm.module.scss'
 
@@ -11,17 +12,24 @@ type Props = {
 }
 
 export const StoryForm: FC<Props> = ({ story, onGenerate }) => {
+  const { t } = useTranslation()
+
   const [prompt, setPrompt] = useState(story.prompt || '')
-  const [lang, setLang] = useState<Language>(story.lang || Language.Russian)
   const [model, setModel] = useState<AITextModel>(story.model || AITextModel.Mistral8x7BInstruct)
   const [scenesNum, setScenesNum] = useState<number>(story.scenesNum || 5)
   const [writer, setWriter] = useState<StoryWriter | string | undefined>(story.writer)
   const [genre, setGenre] = useState<StoryGenre | undefined>(story.genre)
   const [audience, setAudience] = useState<StoryAudience | undefined>(story.audience)
 
-  const writers = Object.values(StoryWriter).map(item => ({ value: item, label: item }))
-  const genres = Object.values(StoryGenre).map(item => ({ value: item, label: item }))
-  const audiences = Object.values(StoryAudience).map(item => ({ value: item, label: item }))
+  const buildOptions = (list: string[], translationPrefix: string) => {
+    return list.map(item => {
+      return { value: item, label: t(`${translationPrefix}.${item}`) }
+    })
+  }
+
+  const writerOptions = buildOptions(Object.values(StoryWriter), 'StoryPage.writers')
+  const genreOptions = buildOptions(Object.values(StoryGenre), 'StoryPage.genres')
+  const audienceOptions = buildOptions(Object.values(StoryAudience), 'StoryPage.audiences')
 
   const handleChangeScenes = (e: number | null) => {
     setScenesNum(e || 1)
@@ -32,13 +40,12 @@ export const StoryForm: FC<Props> = ({ story, onGenerate }) => {
     onGenerate({
       prompt,
       model,
-      lang,
       scenesNum,
       writer,
       genre,
       audience,
     })
-  }, [audience, genre, lang, model, onGenerate, prompt, scenesNum, writer])
+  }, [audience, genre, model, onGenerate, prompt, scenesNum, writer])
 
   return (
     <div className={styles.storyForm}>
@@ -46,7 +53,6 @@ export const StoryForm: FC<Props> = ({ story, onGenerate }) => {
         layout="vertical"
         initialValues={{
           promptValue: prompt,
-          langValue: lang,
           modelValue: model,
           scenesValue: scenesNum,
           writerValue: writer ? [writer] : [],
@@ -54,22 +60,11 @@ export const StoryForm: FC<Props> = ({ story, onGenerate }) => {
           audienceValue: audience,
         }}
       >
-        <Form.Item label="Describe your story" name="promptValue">
+        <Form.Item label={t('StoryPage.prompt')} name="promptValue">
           <TextArea rows={5} value={prompt} onChange={e => setPrompt(e.target.value)} />
         </Form.Item>
 
-        <Form.Item label="Response language" name="langValue">
-          <Select
-            style={{ width: 300 }}
-            options={[
-              { value: Language.English, label: 'English' },
-              { value: Language.Russian, label: 'Русский' },
-            ]}
-            onChange={val => setLang(val)}
-          />
-        </Form.Item>
-
-        <Form.Item label="Model" name="modelValue">
+        <Form.Item label={t('StoryPage.model')} name="modelValue">
           <Select
             style={{ width: 300 }}
             options={Array.from(AITextModelList, ([value, label]) => ({ value, label }))}
@@ -77,32 +72,36 @@ export const StoryForm: FC<Props> = ({ story, onGenerate }) => {
           />
         </Form.Item>
 
-        <Form.Item label="Your favorite writer" name="writerValue">
+        <Form.Item label={t('StoryPage.writerStyle')} name="writerValue">
           <Select
             mode="tags"
             style={{ width: 300 }}
-            placeholder="Your own style"
+            placeholder={t('StoryPage.ownStyle')}
             maxCount={1}
-            options={writers}
+            options={writerOptions}
             onChange={val => setWriter(val[0])}
           />
         </Form.Item>
 
-        <Form.Item label="Genre" name="genreValue">
-          <Select options={genres} style={{ width: 300 }} onChange={val => setGenre(val)} />
+        <Form.Item label={t('StoryPage.genre')} name="genreValue">
+          <Select options={genreOptions} style={{ width: 300 }} onChange={val => setGenre(val)} />
         </Form.Item>
 
-        <Form.Item label="Audience" name="audienceValue">
-          <Select options={audiences} style={{ width: 300 }} onChange={val => setAudience(val)} />
+        <Form.Item label={t('StoryPage.audience')} name="audienceValue">
+          <Select
+            options={audienceOptions}
+            style={{ width: 300 }}
+            onChange={val => setAudience(val)}
+          />
         </Form.Item>
 
-        <Form.Item label="Number of scenes" name="scenesValue">
+        <Form.Item label={t('StoryPage.numberOfScenes')} name="scenesValue">
           <InputNumber min={1} max={10} onChange={handleChangeScenes} />
         </Form.Item>
 
         <Form.Item>
           <Button type="primary" disabled={!prompt} onClick={handleSubmit}>
-            Generate scenes
+            {t('StoryPage.generateScenes')}
           </Button>
         </Form.Item>
       </Form>
