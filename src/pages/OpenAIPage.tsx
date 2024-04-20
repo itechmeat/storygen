@@ -15,7 +15,7 @@ const client = new OpenAI({
 
 export const OpenAIPage = () => {
   const [systemMessage, setSystemMessage] = useState(
-    "You're skilled frontend developer. Give an answer in the markdown mode.",
+    "You're skilled FrontEnd developer. Give an answer in the markdown mode.",
   )
   const [prompt, setPrompt] = useState('What is the SOLID, DRY and KISS?')
   const [isLoading, setIsLoading] = useState(false)
