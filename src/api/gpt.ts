@@ -2,8 +2,6 @@
 import OpenAI from 'openai'
 import { ImageGenerateParams } from 'openai/resources/images.mjs'
 import { StoryOptions } from '../features/story/type'
-import { ImageGenerateParams } from 'openai/resources/images.mjs'
-import { StoryOptions } from '../features/story/type'
 import { clog } from '../utils/common.utils'
 
 export enum AITextModel {
