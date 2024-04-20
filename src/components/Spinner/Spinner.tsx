@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import { FC } from 'react'
 import { LoadingOutlined } from '@ant-design/icons'
 import styles from './Spinner.module.scss'

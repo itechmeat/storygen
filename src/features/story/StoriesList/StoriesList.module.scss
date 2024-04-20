@@ -1,0 +1,6 @@
+.list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-big);
+  margin-block-end: var(--space-big);
+}

@@ -17,10 +17,10 @@ export const TogetherAIPage = () => {
   const [isLoading, setIsLoading] = useState(false)
   const [answer, setAnswer] = useState('')
 
-  const fetchChatGPTResponse = useCallback(
+  const fetchAIResponse = useCallback(
     async (inputText: string) => {
       return await askGPT({
-        config: systemMessage,
+        systemMessage: systemMessage,
         prompt: inputText,
         lang: lang,
         model: model,
@@ -33,15 +33,15 @@ export const TogetherAIPage = () => {
     if (!prompt) return
     setIsLoading(true)
 
-    const chatGPTResponse = await fetchChatGPTResponse(prompt)
+    const chatGPTResponse = await fetchAIResponse(prompt)
     if (chatGPTResponse) {
       setAnswer(chatGPTResponse)
     }
     setIsLoading(false)
-  }, [fetchChatGPTResponse, prompt])
+  }, [fetchAIResponse, prompt])
 
   return (
-    <div style={{ position: 'relative', paddingBlock: '20px' }}>
+    <>
       <Heading
         actions={
           <div>
@@ -121,6 +121,6 @@ export const TogetherAIPage = () => {
           <ReactMarkdown>{answer}</ReactMarkdown>
         </>
       )}
-    </div>
+    </>
   )
 }
