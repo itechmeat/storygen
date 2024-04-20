@@ -1,3 +1,9 @@
+.genTitle {
+  display: flex;
+  align-items: center;
+  gap: var(--space-base);
+}
+
 .scene {
   margin: 0 0 40px 0;
 }

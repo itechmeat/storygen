@@ -6,11 +6,13 @@ import { IScene } from './type'
 
 type SceneState = {
   scenes: IScene[]
+  generatedScene: string | null
   fetchAllScenes: () => Promise<IScene[] | undefined>
   fetchSceneById: (id: UUID) => Promise<IScene | undefined>
   createScene: (scene: IScene) => Promise<IScene | undefined>
   updateScene: (id: UUID, updatedFields: Partial<IScene>) => void
   deleteScene: (id: UUID) => void
+  updateGeneratedScene: (text: string | null) => void
   getAllScenes: () => IScene[]
   getSceneById: (id?: UUID | null) => IScene | null
 }
@@ -18,6 +20,7 @@ type SceneState = {
 export const useSceneStore = create<SceneState>()(
   devtools((set, get) => ({
     scenes: [],
+    generatedScene: null,
     fetchAllScenes: async () => {
       try {
         const scenes = await localDB.scenes.toArray()
@@ -74,6 +77,15 @@ export const useSceneStore = create<SceneState>()(
         await localDB.scenes.delete(sceneId)
       } catch (err) {
         console.error('deleteScene:', err)
+      }
+    },
+    updateGeneratedScene: async (text: string | null) => {
+      try {
+        set(() => ({
+          generatedScene: text,
+        }))
+      } catch (err) {
+        console.error('updateGeneratedScene:', err)
       }
     },
     getAllScenes: () => {

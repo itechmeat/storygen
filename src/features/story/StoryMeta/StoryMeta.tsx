@@ -1,6 +1,7 @@
 import { FC, useState } from 'react'
 import { DeleteOutlined } from '@ant-design/icons'
-import { Button, Form, Select } from 'antd'
+import { Button, Form, Select, Spin } from 'antd'
+import { useTranslation } from 'react-i18next'
 import { AITextModel, AITextModelList } from '../../../api/gpt'
 import { useStoryStore } from '../storyStore'
 import { IStory } from '../type'
@@ -8,10 +9,12 @@ import styles from './StoryMeta.module.scss'
 
 type Props = {
   story: IStory
+  isGenerating: boolean
   onGenerate: (model: AITextModel) => void
 }
 
-export const StoryMeta: FC<Props> = ({ story, onGenerate }) => {
+export const StoryMeta: FC<Props> = ({ story, isGenerating, onGenerate }) => {
+  const { t } = useTranslation()
   const { updateStory } = useStoryStore()
 
   const [model, setModel] = useState<AITextModel>(story.model || AITextModel.Mistral8x7BInstruct)
@@ -29,10 +32,6 @@ export const StoryMeta: FC<Props> = ({ story, onGenerate }) => {
 
   return (
     <div className={styles.meta}>
-      {!false && story.summary && (
-        <Button type="primary" danger icon={<DeleteOutlined />} onClick={tmpClear} />
-      )}
-
       {story.summary ? (
         <div className={styles.poster}>
           {story.description && <h3 className={styles.description}>{story.description}</h3>}
@@ -40,6 +39,10 @@ export const StoryMeta: FC<Props> = ({ story, onGenerate }) => {
             <q className={styles.quote}>{story.summary}</q>
           </p>
         </div>
+      ) : isGenerating ? (
+        <h1 className={styles.genTitle}>
+          {t('StoryPage.generatingMetaData')} <Spin />
+        </h1>
       ) : (
         <div className={styles.generator}>
           <Form
@@ -51,10 +54,12 @@ export const StoryMeta: FC<Props> = ({ story, onGenerate }) => {
             }}
           >
             <Form.Item className={styles.field}>
-              <Button onClick={() => onGenerate(model)}>Generate Meta Data</Button>
+              <Button type="primary" onClick={() => onGenerate(model)}>
+                {t('StoryPage.generateMetaData')}
+              </Button>
             </Form.Item>
 
-            <span>with</span>
+            <span>{t('StoryPage.generateWith')}</span>
 
             <Form.Item name="modelValue" className={styles.field}>
               <Select
@@ -64,6 +69,14 @@ export const StoryMeta: FC<Props> = ({ story, onGenerate }) => {
               />
             </Form.Item>
           </Form>
+        </div>
+      )}
+
+      {!false && story.summary && (
+        <div className={styles.actions}>
+          <Button danger icon={<DeleteOutlined />} onClick={tmpClear}>
+            {t('StoryPage.removeMetaData')}
+          </Button>
         </div>
       )}
     </div>

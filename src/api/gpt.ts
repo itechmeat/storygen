@@ -202,6 +202,35 @@ export const askGPT = async (options: StoryOptions, key: string) => {
     console.error(error)
   }
 }
+export const askAIStream = async (options: StoryOptions, key: string) => {
+  const client = options.model?.startsWith('gpt') ? getClient(key) : getClient(key, TOGETHER_AI_URL)
+
+  try {
+    const systemMessage = `${options.systemMessage}\n${getLangConfig(options.lang)}`
+
+    clog('System message', systemMessage)
+    clog('PROMPT', options.prompt)
+
+    const stream = await client.chat.completions.create({
+      messages: [
+        {
+          role: 'system',
+          content: systemMessage,
+        },
+        {
+          role: 'user',
+          content: options.prompt || '',
+        },
+      ],
+      model: options.model || AITextModel.Mistral8x7BInstruct,
+      stream: true,
+    })
+
+    return stream
+  } catch (error) {
+    console.error(error)
+  }
+}
 
 export const askGPTImage = async (options: ImageGenerateParams, key: string) => {
   const client = options.model?.startsWith('dall-e')

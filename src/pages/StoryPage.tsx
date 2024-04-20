@@ -4,7 +4,7 @@ import { Button, Result, notification } from 'antd'
 import { useTranslation } from 'react-i18next'
 import { useParams } from 'react-router-dom'
 import { v4 as uuidv4 } from 'uuid'
-import { AIImageModel, AITextModel, askGPT, askGPTImage } from '../api/gpt'
+import { AIImageModel, AITextModel, askAIStream, askGPT, askGPTImage } from '../api/gpt'
 import { useSceneStore } from '../features/scene/sceneStore'
 import { IScene } from '../features/scene/type'
 import { Story } from '../features/story/Story/Story'
@@ -32,7 +32,7 @@ export const StoryPage = () => {
 
   useFetchAllStories()
   const { updateStory } = useStoryStore()
-  const { createScene } = useSceneStore()
+  const { createScene, generatedScene, updateGeneratedScene } = useSceneStore()
 
   const storyId = useParams().storyId
   const { getStoryById } = useStoryStore()
@@ -41,6 +41,9 @@ export const StoryPage = () => {
   const { getKey, requiredKey, setRequiredKey } = useCheckKeys()
 
   const [isStoryGenerating, setIsStoryGenerating] = useState(false)
+  const [isSummaryGenerating, setIsSummaryGenerating] = useState(false)
+  const [isMetaGenerating, setIsMetaGenerating] = useState(false)
+  const [isCoverGenerating, setIsCoverGenerating] = useState(false)
   const [changedStory, setChangedStory] = useState<IStory | null>(null)
 
   const formattedResponse = story?.response ? formatResponse(story?.response) : null
@@ -132,7 +135,7 @@ export const StoryPage = () => {
 
     clog('Request', JSON.stringify(request))
 
-    return await askGPT(request, getKey(updatedStory.model as AITextModel))
+    return await askAIStream(request, getKey(updatedStory.model as AITextModel))
   }
 
   const generateSceneSummary = async (story: IStory, context: string) => {
@@ -156,8 +159,19 @@ export const StoryPage = () => {
 
     for (let i = 0; i < formattedResponse.length; i++) {
       const context = buildScenePrompt(story, formattedResponse, i)
-      const content = await generateSceneContent(story, context)
+      const stream = await generateSceneContent(story, context)
+      const teeStream = stream?.tee()
+
+      let content = ''
+      if (teeStream) {
+        for await (const chunk of teeStream[0]) {
+          content = content + chunk.choices[0]?.delta?.content || ''
+          updateGeneratedScene(content)
+        }
+      }
+
       if (content) {
+        setIsSummaryGenerating(true)
         const summary = await generateSceneSummary(story, content)
         const scene: IScene = {
           id: uuidv4(),
@@ -166,22 +180,20 @@ export const StoryPage = () => {
           summary: summary ? summary : undefined,
         }
         scenes.push(scene)
+        await createScene(scene)
+        await updateStory(story.id, { ...story, sceneIds: scenes.map(item => item.id) })
+        setIsSummaryGenerating(false)
+        updateGeneratedScene(null)
       }
     }
 
     setIsStoryGenerating(false)
-
-    for (const scene of scenes) {
-      await createScene(scene)
-    }
-
-    await updateStory(story.id, { ...story, sceneIds: scenes.map(item => item.id) })
   }
 
   const handleMetaGenerate = async (model: AITextModel, context: string) => {
     if (!story) return
 
-    setIsStoryGenerating(true)
+    setIsMetaGenerating(true)
 
     const request = {
       prompt: t('prompts.storySummaryGenerator', { context }),
@@ -192,8 +204,6 @@ export const StoryPage = () => {
     clog('Request', JSON.stringify(request))
 
     const response = await askGPT(request, getKey(story.model as AITextModel))
-
-    setIsStoryGenerating(false)
 
     if (response) {
       const resJSON = extractObjectFromString(response)
@@ -210,13 +220,16 @@ export const StoryPage = () => {
 
       await updateStory(story.id, update)
     }
+
+    setIsMetaGenerating(false)
+
     return response
   }
 
   const handleCoverGenerate = async (model: AIImageModel) => {
     if (!story?.cover_text_en) return
 
-    setIsStoryGenerating(true)
+    setIsCoverGenerating(true)
 
     await updateStory(story.id, {
       cover: '',
@@ -245,8 +258,9 @@ export const StoryPage = () => {
     } catch (error: any) {
       openErrorNotification("Can't generate Image", error.message)
     } finally {
-      setIsStoryGenerating(false)
+      setIsCoverGenerating(false)
     }
+    setIsCoverGenerating(false)
   }
 
   const handleOk = (localKey: string) => {
@@ -280,8 +294,12 @@ export const StoryPage = () => {
       {contextHolder}
       <Story
         story={story}
+        generatedScene={generatedScene}
         formattedResponse={extractArrayFromString(story.response)}
         isStoryGenerating={isStoryGenerating}
+        isSummaryGenerating={isSummaryGenerating}
+        isMetaGenerating={isMetaGenerating}
+        isCoverGenerating={isCoverGenerating}
         onUpdate={handleUpdate}
         onStoryGenerate={handleStoryGenerate}
         onStoryCancel={() => handleUpdate({ ...story, response: '' })}

@@ -47,6 +47,13 @@ const translation = {
     generatedScenes: 'Generated scenes for your story',
     regenerate: 'Regenerate with new data',
     generateFullStory: 'Generate full story',
+    generatingScene: 'Generating scene',
+    removeScenes: 'Remove Scenes',
+    generateMetaData: 'Generate Meta Data',
+    generatingMetaData: 'Generating Meta Data',
+    removeMetaData: 'Remove Meta Data',
+    generateWith: 'with',
+    generateCover: 'Generate Cover',
   },
   prompts: {
     writerVariant: {
