@@ -4,16 +4,16 @@ import { Button, Form } from 'antd'
 import TextArea from 'antd/es/input/TextArea'
 import OpenAI from 'openai'
 import ReactMarkdown from 'react-markdown'
+import { AITextModel } from '../api/gpt'
 import { Heading } from '../components/Heading/Heading'
 import { Spinner } from '../components/Spinner/Spinner'
+import { UserKeysProvider } from '../features/user/UserKeysProvider/UserKeysProvider'
+import { useCheckKeys } from '../features/user/hooks/check-keys.hook'
 import { clog } from '../utils/common.utils'
 
-const client = new OpenAI({
-  apiKey: import.meta.env.VITE_OPENAI_API_KEY,
-  dangerouslyAllowBrowser: true,
-})
-
 export const OpenAIPage = () => {
+  const { getKey, requiredKey, setRequiredKey } = useCheckKeys()
+
   const [systemMessage, setSystemMessage] = useState(
     "You're skilled FrontEnd developer. Give an answer in the markdown mode.",
   )
@@ -21,43 +21,68 @@ export const OpenAIPage = () => {
   const [isLoading, setIsLoading] = useState(false)
   const [answer, setAnswer] = useState('')
 
-  const askGPT = useCallback(async () => {
-    clog('System message', systemMessage)
-    clog('PROMPT', prompt)
+  const getClient = (key: string) => {
+    return new OpenAI({
+      apiKey: key,
+      dangerouslyAllowBrowser: true,
+    })
+  }
 
-    try {
-      setIsLoading(true)
-      const response = await client.chat.completions.create({
-        messages: [
-          {
-            role: 'system',
-            content: systemMessage,
-          },
-          {
-            role: 'user',
-            content: prompt,
-          },
-        ],
-        model: 'gpt-3.5-turbo',
-        max_tokens: 500,
-      })
+  const fetchAIResponse = useCallback(
+    async (localKey?: string) => {
+      clog('System message', systemMessage)
+      clog('PROMPT', prompt)
 
-      const result = response.choices[0].message.content
+      try {
+        setIsLoading(true)
+        const response = await getClient(
+          localKey || getKey(AITextModel.GPT3Turbo),
+        ).chat.completions.create({
+          messages: [
+            {
+              role: 'system',
+              content: systemMessage,
+            },
+            {
+              role: 'user',
+              content: prompt,
+            },
+          ],
+          model: AITextModel.GPT3Turbo,
+          max_tokens: 500,
+        })
 
-      clog('ANSWER', result)
+        const result = response.choices[0].message.content
 
-      if (result) {
-        setAnswer(result)
+        clog('ANSWER', result)
+
+        if (result) {
+          setAnswer(result)
+        }
+        return result
+      } catch (error) {
+        console.error(error)
+      } finally {
+        setIsLoading(false)
       }
-    } catch (error) {
-      console.error(error)
-    } finally {
-      setIsLoading(false)
+    },
+    [getKey, prompt, systemMessage],
+  )
+
+  const handleOk = (localKey: string) => {
+    setRequiredKey(null)
+    if (prompt) {
+      fetchAIResponse(localKey)
     }
-  }, [prompt, systemMessage])
+  }
+
+  const handleCancel = () => {
+    setRequiredKey(null)
+    setIsLoading(false)
+  }
 
   return (
-    <>
+    <UserKeysProvider requiredKey={requiredKey} onOk={handleOk} onClose={handleCancel}>
       <Heading
         actions={
           <>
@@ -91,7 +116,7 @@ export const OpenAIPage = () => {
         </Form.Item>
 
         <Form.Item>
-          <Button type="primary" onClick={askGPT}>
+          <Button type="primary" onClick={() => fetchAIResponse()}>
             Ask ChatGPT
           </Button>
         </Form.Item>
@@ -105,6 +130,6 @@ export const OpenAIPage = () => {
           <ReactMarkdown>{answer}</ReactMarkdown>
         </>
       )}
-    </>
+    </UserKeysProvider>
   )
 }

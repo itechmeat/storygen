@@ -1,16 +1,22 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useCallback, useState } from 'react'
+import { Button, Result, notification } from 'antd'
 import { useParams } from 'react-router-dom'
 import { v4 as uuidv4 } from 'uuid'
-import { AIImageModel, GPTModel, Language, askGPT, askGPTImage } from '../api/gpt'
+import { AIImageModel, AITextModel, Language, askGPT, askGPTImage } from '../api/gpt'
 import { useSceneStore } from '../features/scene/sceneStore'
 import { IScene } from '../features/scene/type'
 import { Story } from '../features/story/Story/Story'
 import { useFetchAllStories } from '../features/story/hooks/fetch-stories.hook'
 import { useStoryStore } from '../features/story/storyStore'
 import { IStory } from '../features/story/type'
+import { UserKeysProvider } from '../features/user/UserKeysProvider/UserKeysProvider'
+import { useCheckKeys } from '../features/user/hooks/check-keys.hook'
 import { clog } from '../utils/common.utils'
 import {
   buildScenePrompt,
+  extractArrayFromString,
+  extractObjectFromString,
   formatResponse,
   getAudience,
   getGenre,
@@ -18,9 +24,10 @@ import {
   getWriterStyle,
 } from '../utils/story.utils'
 
+const PROMPT_SIZE = 2000
+
 export const StoryPage = () => {
   useFetchAllStories()
-
   const { updateStory } = useStoryStore()
   const { createScene } = useSceneStore()
 
@@ -28,9 +35,21 @@ export const StoryPage = () => {
   const { getStoryById } = useStoryStore()
   const story = getStoryById(storyId)
 
+  const { getKey, requiredKey, setRequiredKey } = useCheckKeys()
+
   const [isStoryGenerating, setIsStoryGenerating] = useState(false)
+  const [changedStory, setChangedStory] = useState<IStory | null>(null)
 
   const formattedResponse = story?.response ? formatResponse(story?.response) : null
+
+  const [api, contextHolder] = notification.useNotification()
+
+  const openErrorNotification = (message: string, description?: string) => {
+    api.error({
+      message,
+      description,
+    })
+  }
 
   const handleUpdate = useCallback(
     (story: IStory) => {
@@ -39,7 +58,7 @@ export const StoryPage = () => {
     [updateStory],
   )
 
-  const fetchAIResponse = async (updatedStory: IStory) => {
+  const fetchAIResponse = async (updatedStory: IStory, localKey?: string) => {
     const writerStyle = getWriterStyle(updatedStory)
     const storyTask = getStoryTask(updatedStory)
     const storyGenre = getGenre(updatedStory)
@@ -50,18 +69,23 @@ export const StoryPage = () => {
         case Language.Russian:
           return `
             ${writerStyle} ${storyTask} ${storyGenre} ${storyAudience}
-            В ответе пришли только список эпизодов и ничего более. Фотмат ответа - ненумерованый список, в каждом пункте название эпизода и описание эпизода.
-            Каждый эпизод заключен в тег <c>, название в теге <t> (только название, без префикса "эпизод" и подобного), описание в теге <d>.
-            Т.е. структура конечного формата: <c><t>название</t><d>описание</d></c>.
-            Пришли полный список без сокращений и пропусков.
+            Пришли полный список эпизодов без сокращений и пропусков.
+            Формат ответа сделай в одном едином JSON:
+            [{"t": "_название_", "d": "_описание_"}, ... {"t": "_название_", "d": "_описание_"}]
+            Название должно быть без префиксов, только название. Не нумеруй эпизоды.
+            Размер каждого описания около ${(PROMPT_SIZE - 100) / (updatedStory?.scenesNum || 1)}
+            В ответе не должно быть ничего, кроме этого JSON.
             `
         default:
           return `
             ${writerStyle} ${storyTask} ${storyGenre} ${storyAudience}
             In your response, provide only the list of episodes and nothing more. The response format should be an unordered list, with each item containing the episode title and description.
             Each episode is enclosed in a <c> tag, the title in a <t> tag (title only, without any prefix like "episode" or similar), and the description in a <d> tag.
-            Thus, the final format structure is: <c><t>title</t><d>description</d></c>.
-            Send the complete list without abbreviations or omissions.
+            Make the response format in JSON:
+            [{t: '_title_', d: '_description_'}]
+            The name must have no prefixes, just the title. Don't number the episodes.
+            The size of each description is about ${(PROMPT_SIZE - 100) / (updatedStory?.scenesNum || 1)}
+            The response should contain nothing other than this JSON.
             `
       }
     }
@@ -75,12 +99,24 @@ export const StoryPage = () => {
 
     clog('Request', JSON.stringify(request))
 
-    return await askGPT(request)
+    try {
+      const key = localKey || getKey(updatedStory.model as AITextModel)
+      console.log('🚀 ~ fetchAIResponse ~ key:', key)
+      return await askGPT(request, key)
+    } catch (error) {
+      console.error(error)
+    }
   }
 
   const handleStoryGenerate = async (updatedStory: IStory) => {
+    setChangedStory(updatedStory)
     setIsStoryGenerating(true)
     const chatGPTResponse = await fetchAIResponse(updatedStory)
+    if (!chatGPTResponse && getKey(updatedStory.model as AITextModel)) {
+      openErrorNotification('Wrong answer')
+      setIsStoryGenerating(false)
+      return
+    }
     if (chatGPTResponse) {
       handleUpdate({ ...updatedStory, response: chatGPTResponse.trim() })
     }
@@ -98,13 +134,13 @@ export const StoryPage = () => {
           return `
             ${writerStyle} ${storyGenre} ${storyAudience}
             В ответе должен содержаться только эпизод и ничего более.
-            Не нужно вначале дописывать ничего вроде "Эпизод №...".
+            Не нумеруй эпизоды.
             `
         default:
           return `
             ${writerStyle} ${storyGenre} ${storyAudience}
             The answer should contain only the episode and nothing more.
-            There is no need to first add anything like “Episode No...”
+            Don't number the episodes.
             `
       }
     }
@@ -133,7 +169,7 @@ export const StoryPage = () => {
 
     clog('Request', JSON.stringify(request))
 
-    return await askGPT(request)
+    return await askGPT(request, getKey(story.model as AITextModel))
   }
 
   const generateSceneSummary = async (story: IStory, context: string) => {
@@ -176,7 +212,7 @@ export const StoryPage = () => {
 
     clog('Request', JSON.stringify(request))
 
-    return await askGPT(request)
+    return await askGPT(request, getKey(story.model as AITextModel))
     // return 'NOPE'
   }
 
@@ -193,7 +229,7 @@ export const StoryPage = () => {
         const summary = await generateSceneSummary(story, content)
         const scene: IScene = {
           id: uuidv4(),
-          title: formattedResponse[i].title,
+          title: formattedResponse[i].t,
           content,
           summary: summary ? summary : undefined,
         }
@@ -210,19 +246,10 @@ export const StoryPage = () => {
     await updateStory(story.id, { ...story, sceneIds: scenes.map(item => item.id) })
   }
 
-  const handleMetaGenerate = async (model: GPTModel, context: string) => {
+  const handleMetaGenerate = async (model: AITextModel, context: string) => {
     if (!story) return
 
     setIsStoryGenerating(true)
-
-    const defineConfig = () => {
-      switch (story.lang) {
-        case Language.Russian:
-          return `Отвечай на Русском языке`
-        default:
-          return `Answer in English`
-      }
-    }
 
     const definePrompt = () => {
       switch (story.lang) {
@@ -257,7 +284,6 @@ export const StoryPage = () => {
     }
 
     const request = {
-      systemMessage: defineConfig(),
       prompt: definePrompt(),
       lang: story.lang,
       model: model || story.model,
@@ -265,15 +291,12 @@ export const StoryPage = () => {
 
     clog('Request', JSON.stringify(request))
 
-    const response = await askGPT(request)
+    const response = await askGPT(request, getKey(story.model as AITextModel))
 
     setIsStoryGenerating(false)
 
     if (response) {
-      const jsonStart = response.indexOf('{')
-      const jsonEnd = response.lastIndexOf('}')
-      const jsonString = response.substring(jsonStart, jsonEnd + 1)
-      const resJSON = JSON.parse(jsonString)
+      const resJSON = extractObjectFromString(response)
 
       const update = {
         ...story,
@@ -335,28 +358,62 @@ export const StoryPage = () => {
       quality: 'standard',
     }
     const options = isOpenAiExtended ? { ...baseOptions, ...openAiOptions } : baseOptions
-    const response = await askGPTImage(options)
-    const imageData = response?.[0]
-    await updateStory(story.id, {
-      cover: imageData?.b64_json ? `data:image/png;base64, ${imageData?.b64_json}` : imageData?.url,
-    })
 
+    try {
+      const response = await askGPTImage(options, getKey(model))
+      const imageData = response?.[0]
+      await updateStory(story.id, {
+        cover: imageData?.b64_json
+          ? `data:image/png;base64, ${imageData?.b64_json}`
+          : imageData?.url,
+      })
+    } catch (error: any) {
+      openErrorNotification("Can't generate Image", error.message)
+    } finally {
+      setIsStoryGenerating(false)
+    }
+  }
+
+  const handleOk = (localKey: string) => {
+    setRequiredKey(null)
+    if (changedStory) {
+      fetchAIResponse(changedStory, localKey)
+    }
+  }
+
+  const handleCancel = () => {
+    setRequiredKey(null)
     setIsStoryGenerating(false)
   }
 
-  if (!story) return <div>Story not found</div>
+  if (!story)
+    return (
+      <Result
+        status="404"
+        title="Story not found"
+        subTitle="See your other stories"
+        extra={
+          <Button type="primary" href=".">
+            Go to stories
+          </Button>
+        }
+      />
+    )
 
   return (
-    <Story
-      story={story}
-      formattedResponse={formattedResponse}
-      isStoryGenerating={isStoryGenerating}
-      onUpdate={handleUpdate}
-      onStoryGenerate={handleStoryGenerate}
-      onStoryCancel={() => handleUpdate({ ...story, response: '' })}
-      onScenesGenerate={handleScenesGenerate}
-      onMetaGenerate={handleMetaGenerate}
-      onCoverGenerate={handleCoverGenerate}
-    />
+    <UserKeysProvider requiredKey={requiredKey} onOk={handleOk} onClose={handleCancel}>
+      {contextHolder}
+      <Story
+        story={story}
+        formattedResponse={extractArrayFromString(story.response)}
+        isStoryGenerating={isStoryGenerating}
+        onUpdate={handleUpdate}
+        onStoryGenerate={handleStoryGenerate}
+        onStoryCancel={() => handleUpdate({ ...story, response: '' })}
+        onScenesGenerate={handleScenesGenerate}
+        onMetaGenerate={handleMetaGenerate}
+        onCoverGenerate={handleCoverGenerate}
+      />
+    </UserKeysProvider>
   )
 }

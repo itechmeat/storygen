@@ -1,4 +1,4 @@
-import { GPTModel, Language } from '../../api/gpt'
+import { AITextModel, Language } from '../../api/gpt'
 import { UUID } from '../../types/common'
 
 export enum StoryWriter {
@@ -34,7 +34,7 @@ export enum StoryAudience {
 export type StoryOptions = {
   systemMessage?: string
   prompt?: string
-  model?: GPTModel
+  model?: AITextModel
   lang?: Language
   scenesNum?: number
   writer?: StoryWriter | string
@@ -57,4 +57,9 @@ export type IStory = StoryOptions & {
 export type ShortScene = {
   title: string
   description: string
+}
+
+export type CompactShortScene = {
+  t: string
+  d: string
 }

@@ -5,6 +5,8 @@ import TextArea from 'antd/es/input/TextArea'
 import { AIImageModel, AIImageModelList, askGPTImage } from '../api/gpt'
 import { Heading } from '../components/Heading/Heading'
 import { Spinner } from '../components/Spinner/Spinner'
+import { UserKeysProvider } from '../features/user/UserKeysProvider/UserKeysProvider'
+import { useCheckKeys } from '../features/user/hooks/check-keys.hook'
 
 type ImageData = {
   url?: string
@@ -17,13 +19,15 @@ export const OpenAIImagePage = () => {
   const [isLoading, setIsLoading] = useState(false)
   const [image, setImage] = useState<ImageData | null>(null)
 
+  const { getKey, requiredKey, setRequiredKey } = useCheckKeys()
+
   const imageSrc = useMemo(() => {
     if (!image) return
     return image.b64_json ? `data:image/png;base64, ${image.b64_json}` : image.url
   }, [image])
 
   const fetchAIResponse = useCallback(
-    async (inputText: string) => {
+    async (inputText: string, localKey?: string) => {
       const isOpenAiExtended = model === AIImageModel.OpenAIDallE3
       const baseOptions = {
         model: model,
@@ -35,22 +39,37 @@ export const OpenAIImagePage = () => {
         quality: 'standard',
       }
       const options = isOpenAiExtended ? { ...baseOptions, ...openAiOptions } : baseOptions
-      return await askGPTImage(options)
+      return await askGPTImage(options, localKey || getKey(model))
     },
-    [model],
+    [getKey, model],
   )
 
-  const handleSubmit = useCallback(async () => {
-    if (!prompt) return
-    setIsLoading(true)
+  const handleSubmit = useCallback(
+    async (localKey?: string) => {
+      if (!prompt) return
+      setIsLoading(true)
 
-    const chatGPTResponse = await fetchAIResponse(prompt)
-    const imageData = chatGPTResponse?.[0]
-    if (imageData) {
-      setImage(imageData)
+      const chatGPTResponse = await fetchAIResponse(prompt, localKey)
+      const imageData = chatGPTResponse?.[0]
+      if (imageData) {
+        setImage(imageData)
+      }
+      setIsLoading(false)
+    },
+    [fetchAIResponse, prompt],
+  )
+
+  const handleOk = (localKey: string) => {
+    setRequiredKey(null)
+    if (prompt) {
+      handleSubmit(localKey)
     }
+  }
+
+  const handleCancel = () => {
+    setRequiredKey(null)
     setIsLoading(false)
-  }, [fetchAIResponse, prompt])
+  }
 
   if (imageSrc) {
     return (
@@ -75,7 +94,7 @@ export const OpenAIImagePage = () => {
   }
 
   return (
-    <>
+    <UserKeysProvider requiredKey={requiredKey} onOk={handleOk} onClose={handleCancel}>
       <Heading
         actions={
           <div>
@@ -120,13 +139,13 @@ export const OpenAIImagePage = () => {
         </Form.Item>
 
         <Form.Item>
-          <Button type="primary" onClick={handleSubmit}>
+          <Button type="primary" onClick={() => handleSubmit()}>
             Generate
           </Button>
         </Form.Item>
 
         {isLoading && <Spinner />}
       </Form>
-    </>
+    </UserKeysProvider>
   )
 }
