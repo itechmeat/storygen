@@ -18,6 +18,26 @@ import {
   getWriterStyle,
 } from '../utils/story.utils'
 
+import { useCallback, useState } from 'react'
+import { useParams } from 'react-router-dom'
+import { v4 as uuidv4 } from 'uuid'
+import { Language, askGPT } from '../api/gpt'
+import { useSceneStore } from '../features/scene/sceneStore'
+import { IScene } from '../features/scene/type'
+import { Story } from '../features/story/Story/Story'
+import { useFetchAllStories } from '../features/story/hooks/fetch-stories.hook'
+import { useStoryStore } from '../features/story/storyStore'
+import { IStory } from '../features/story/type'
+import { clog } from '../utils/common.utils'
+import {
+  buildScenePrompt,
+  formatResponse,
+  getAudience,
+  getGenre,
+  getStoryTask,
+  getWriterStyle,
+} from '../utils/story.utils'
+
 export const StoryPage = () => {
   useFetchAllStories()
 
@@ -76,7 +96,6 @@ export const StoryPage = () => {
     clog('Request', JSON.stringify(request))
 
     return await askGPT(request)
-    // return 'NOPE'
   }
 
   const handleStoryGenerate = async (updatedStory: IStory) => {
@@ -135,7 +154,6 @@ export const StoryPage = () => {
     clog('Request', JSON.stringify(request))
 
     return await askGPT(request)
-    // return 'NOPE'
   }
 
   const generateSceneSummary = async (story: IStory, context: string) => {
@@ -212,6 +230,84 @@ export const StoryPage = () => {
     await updateStory(story.id, { ...story, sceneIds: scenes.map(item => item.id) })
   }
 
+  const handleMetaGenerate = async (context: string) => {
+    if (!story) return
+
+    setIsStoryGenerating(true)
+
+    const defineConfig = () => {
+      switch (story.lang) {
+        case Language.Russian:
+          return `Отвечай на Русском языке`
+        default:
+          return `Answer in English`
+      }
+    }
+
+    const definePrompt = () => {
+      switch (story.lang) {
+        case Language.Russian:
+          return `
+            У меня написанвъа такая история:
+            ---
+            ${context}
+            ---
+            Напиши саммари для неё, от 300 до 500 символов.
+            Это же саммари перевиди на английский язык.
+            А так же на русском напиши короткое описание, от 100 до 120 символов.
+            А так же на русском предложи 10 вариантов названия для истории.
+            Формат ответа сделай в JSON:
+            {summary: '_summary_', summary_en: '_summary_en_', description: '_description_', names: ['name1', 'name2', ... 'name10']}
+            В ответе не должно быть ничего, кроме этого JSON.
+            `
+        default:
+          return `
+            У меня написанвъа такая история:
+            ---
+            ${context}
+            ---
+            Напиши саммари для неё, от 300 до 500 символов.
+            А так же напиши короткое описание, от 100 до 120 символов.
+            А так же предложи 10 вариантов названия для истории.
+            Формат ответа сделай в JSON:
+            {summary: '_summary_', summary_en: '_summary_', description: '_description_', names: ['name1', 'name2', ... 'name10']}
+            В ответе не должно быть ничего, кроме этого JSON.
+          `
+      }
+    }
+
+    const request = {
+      systemMessage: defineConfig(),
+      prompt: definePrompt(),
+      lang: story.lang,
+      model: story.model,
+    }
+
+    clog('Request', JSON.stringify(request))
+
+    const response = await askGPT(request)
+
+    setIsStoryGenerating(false)
+
+    if (response) {
+      const jsonStart = response.indexOf('{')
+      const jsonEnd = response.lastIndexOf('}')
+      const jsonString = response.substring(jsonStart, jsonEnd + 1)
+      const resJSON = JSON.parse(jsonString)
+
+      const update = {
+        ...story,
+        names: resJSON?.names || [],
+        description: resJSON?.description || '',
+        summary: resJSON?.summary || '',
+        summary_en: resJSON?.summary_en || '',
+      }
+
+      await updateStory(story.id, update)
+    }
+    return response
+  }
+
   if (!story) return <div>Story not found</div>
 
   return (
@@ -223,6 +319,7 @@ export const StoryPage = () => {
       onStoryGenerate={handleStoryGenerate}
       onStoryCancel={() => handleUpdate({ ...story, response: '' })}
       onScenesGenerate={handleScenesGenerate}
+      onMetaGenerate={handleMetaGenerate}
     />
   )
 }

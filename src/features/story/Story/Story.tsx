@@ -1,10 +1,13 @@
 import { FC, useCallback, useMemo } from 'react'
+import { UnorderedListOutlined } from '@ant-design/icons'
+import { Button, Dropdown, MenuProps } from 'antd'
 import { Heading } from '../../../components/Heading/Heading'
 import { Spinner } from '../../../components/Spinner/Spinner'
 import { ScenesList } from '../../scene/ScenesList/ScenesList'
 import { useSceneStore } from '../../scene/sceneStore'
 import { IScene } from '../../scene/type'
 import { StoryForm } from '../StoryForm/StoryForm'
+import { StoryMeta } from '../StoryMeta/StoryMeta'
 import { StoryResponse } from '../StoryResponse/StoryResponse'
 import { IStory, ShortScene, StoryOptions } from '../type'
 import styles from './Story.module.scss'
@@ -17,6 +20,7 @@ type StoryProps = {
   onStoryGenerate: (story: IStory) => void
   onStoryCancel: () => void
   onScenesGenerate: () => void
+  onMetaGenerate: (context: string) => void
 }
 
 export const Story: FC<StoryProps> = ({
@@ -27,6 +31,7 @@ export const Story: FC<StoryProps> = ({
   onStoryGenerate,
   onStoryCancel,
   onScenesGenerate,
+  onMetaGenerate,
 }) => {
   const { getSceneById } = useSceneStore()
 
@@ -56,11 +61,43 @@ export const Story: FC<StoryProps> = ({
     [onStoryGenerate, onUpdate, story],
   )
 
+  const handleMetaGenerate = () => {
+    const context = scenesList.map(scene => scene.summary).join('\n')
+    if (context) {
+      onMetaGenerate(context)
+    }
+  }
+
+  const NameSelector = () => {
+    if (!story.names?.length) return null
+
+    const items: MenuProps['items'] = story.names.map((name, index) => ({
+      key: index,
+      label: <span onClick={() => handleTitleUpdate(name)}>{name}</span>,
+    }))
+
+    return (
+      <Dropdown
+        menu={{ items }}
+        placement="bottomRight"
+        trigger={['click']}
+        arrow={{ pointAtCenter: true }}
+      >
+        <Button icon={<UnorderedListOutlined />} />
+      </Dropdown>
+    )
+  }
+
   if (!story) return null
 
   return (
     <article className={styles.story}>
-      <Heading isCentered title={story.title} onChange={handleTitleUpdate} />
+      <Heading
+        isCentered
+        title={story.title}
+        onChange={handleTitleUpdate}
+        actions={<NameSelector />}
+      />
 
       {!scenesList.length ? (
         <div className={styles.content}>
@@ -75,7 +112,10 @@ export const Story: FC<StoryProps> = ({
           )}
         </div>
       ) : (
-        <ScenesList list={scenesList} />
+        <>
+          <StoryMeta story={story} onGenerate={handleMetaGenerate} />
+          <ScenesList list={scenesList} />
+        </>
       )}
 
       {isStoryGenerating && <Spinner />}

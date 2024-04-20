@@ -9,6 +9,17 @@ import { useFetchAllStories } from '../features/story/hooks/fetch-stories.hook'
 import { useStoryStore } from '../features/story/storyStore'
 import { UUID } from '../types/common'
 
+import { useState } from 'react'
+import { PlusOutlined } from '@ant-design/icons'
+import { Button } from 'antd'
+import { v4 as uuidv4 } from 'uuid'
+import { Heading } from '../components/Heading/Heading'
+import { StoriesList } from '../features/story/StoriesList/StoriesList'
+import { StoryCreateModal } from '../features/story/StoryCreateModal/StoryCreateModal'
+import { useFetchAllStories } from '../features/story/hooks/fetch-stories.hook'
+import { useStoryStore } from '../features/story/storyStore'
+import { UUID } from '../types/common'
+
 export const StoriesPage = () => {
   useFetchAllStories()
   const { createStory, getAllStories, deleteStory } = useStoryStore()
@@ -24,6 +35,7 @@ export const StoriesPage = () => {
       description: '',
       prompt: '',
       summary: '',
+      summary_en: '',
       sceneIds: [],
     })
   }
