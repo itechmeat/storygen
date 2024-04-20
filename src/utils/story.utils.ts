@@ -1,52 +1,30 @@
-import { Language } from '../api/gpt'
+import { Language, Translation } from '../features/localization/types'
 import { CompactShortScene, IStory } from '../features/story/type'
 
-export const getWriterStyle = (story: IStory) => {
-  switch (story.lang) {
-    case Language.Russian:
-      return !story.writer
-        ? 'Ты - современный писатель.'
-        : `Ты - писатель, который пишет книги в стиле автора ${story.writer}.`
-    default:
-      return !story.writer
-        ? 'You are modern writer.'
-        : `You are a writer in the style of author ${story.writer}.`
-  }
+export const getWriterStyleText = (story: IStory, t: Translation) => {
+  return !story.writer
+    ? t('prompts.writerVariant.unnamed')
+    : t('prompts.writerVariant.named', {
+        writer: t(`StoryPage.writers.${story.writer}`),
+      })
 }
 
-export const getGenre = (story: IStory) => {
-  switch (story.lang) {
-    case Language.Russian:
-      return !story.genre
-        ? 'Выбери наиболее подходящий жанр на основе промпта.'
-        : `Пиши историю в жанре ${story.genre}.`
-    default:
-      return !story.genre
-        ? 'Choose the most suitable genre based on the prompt.'
-        : `Write a story in the ${story.genre} genre.`
-  }
+export const getGenreText = (story: IStory, t: Translation) => {
+  return !story.genre
+    ? t('prompts.genreVariant.unnamed')
+    : t('prompts.genreVariant.named', {
+        genre: t(`StoryPage.genres.${story.genre}`),
+      })
 }
 
-export const getAudience = (story: IStory) => {
-  switch (story.lang) {
-    case Language.Russian:
-      return !story.audience
-        ? 'Выбери наиболее подходящую аудиторию на основе промпта.'
-        : `Пиши историю для аудитории ${story.audience}.`
-    default:
-      return !story.genre
-        ? 'Choose the most suitable audience based on the prompt.'
-        : `Write a story for the ${story.audience} audience.`
-  }
+export const getAudienceText = (story: IStory, t: Translation) => {
+  return story.audience
+    ? t('prompts.audience', { audience: t(`StoryPage.audiences.${story.audience}`) })
+    : null
 }
 
-export const getStoryTask = (story: IStory, size = 30000) => {
-  switch (story.lang) {
-    case Language.Russian:
-      return `Твоя задача - по описанию из промпта составить список из ${story.scenesNum} эпизодов, которые будут описывать историю.`
-    default:
-      return `Your task is to create a list of ${story.scenesNum} episodes based on the prompt's description that will narrate the story. The size of each episode is at least ${size / Number(story.scenesNum)} characters.`
-  }
+export const getNewStoryTaskText = (story: IStory, t: Translation) => {
+  return t('prompts.storyGenerator.task', { num: story.scenesNum })
 }
 
 export const buildScenePrompt = (
@@ -54,9 +32,9 @@ export const buildScenePrompt = (
   response: CompactShortScene[],
   num: number,
 ): string => {
-  const prefix = story.lang === Language.Russian ? 'Эпизод' : 'Scene'
+  const prefix = story.lang === Language.RU ? 'Эпизод' : 'Scene'
   const config =
-    story.lang === Language.Russian
+    story.lang === Language.RU
       ? `Максимально подробно напиши эпизод №${num + 1}`
       : `Write episode number ${num + 1} in as much detail as possible`
   const content = response

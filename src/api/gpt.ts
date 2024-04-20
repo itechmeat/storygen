@@ -29,9 +29,13 @@ export enum AITextModel {
   LLaMA2Chat70B = 'meta-llama/Llama-2-70b-chat-hf', // 4096
   LLaMA2Chat13B = 'meta-llama/Llama-2-13b-chat-hf', // 4096
   LLaMA2Chat7B = 'meta-llama/Llama-2-7b-chat-hf', // 4096
+  LLaMA3Chat8B = 'meta-llama/Llama-3-8b-chat-hf', // 8000
+  LLaMA3Chat70B = 'meta-llama/Llama-3-70b-chat-hf', // 8000
+  WizardLM2dash8x22B = 'microsoft/WizardLM-2-8x22B', // 65536
   // Mistral7BInstruct01 = 'mistralai/Mistral-7B-Instruct-v0.1', // 8192
   Mistral7BInstruct02 = 'mistralai/Mistral-7B-Instruct-v0.2', // 32768
   Mistral8x7BInstruct = 'mistralai/Mixtral-8x7B-Instruct-v0.1', // 32768
+  Mixtral8x22BInstruct141B = 'mistralai/Mixtral-8x22B-Instruct-v0.1', // 65536
   NousCapybara7B = 'NousResearch/Nous-Capybara-7B-V1p9', // 8192
   NousHermes2MistralDPO7B = 'NousResearch/Nous-Hermes-2-Mistral-7B-DPO', // 32768
   NousHermes2Mistral8x7BDPO = 'NousResearch/Nous-Hermes-2-Mixtral-8x7B-DPO', // 32768
@@ -73,21 +77,25 @@ export const AITextModelList = new Map([
   // [AITextModel.DeepseekCoderInstruct33B, 'Deepseek Coder Instruct (33B)'],
   // [AITextModel.DeepSeekLLMChat67B, 'DeepSeek LLM Chat (67B)'],
   [AITextModel.Platypus2Instruct70B, 'Platypus2 Instruct (70B)'],
-  // [AITextModel.GoogleGemmaInstruct2B, 'Google	Gemma Instruct (2B)'],
+  // [AITextModel.GoogleGemmaInstruct2B, 'Google Gemma Instruct (2B)'],
   [AITextModel.GoogleGemma7BInstruct, 'Google Gemma Instruct (7B)'],
   [AITextModel.MythoMaxL213B, 'MythoMax-L2 (13B)'],
-  [AITextModel.LMSysVicuna13B, 'LM Sys	Vicuna v1.5 (13B)'],
-  [AITextModel.LMSysVicuna7B, 'LM Sys	Vicuna v1.5 (7B)'],
-  [AITextModel.CodeLlamaInstruct13B, 'Meta	Code Llama Instruct (13B)'],
-  [AITextModel.CodeLlamaInstruct34B, 'Meta	Code Llama Instruct (34B)'],
-  // [AITextModel.CodeLlamaInstruct70B, 'Meta	Code Llama Instruct (70B)'],
-  [AITextModel.CodeLlamaInstruct7B, 'Meta	Code Llama Instruct (7B)'],
-  [AITextModel.LLaMA2Chat70B, 'Meta	LLaMA-2 Chat (70B)'],
-  [AITextModel.LLaMA2Chat13B, 'Meta	LLaMA-2 Chat (13B)'],
-  [AITextModel.LLaMA2Chat7B, 'Meta	LLaMA-2 Chat (7B)'],
+  [AITextModel.LMSysVicuna13B, 'LM Sys Vicuna v1.5 (13B)'],
+  [AITextModel.LMSysVicuna7B, 'LM Sys Vicuna v1.5 (7B)'],
+  [AITextModel.CodeLlamaInstruct13B, 'Meta Code Llama Instruct (13B)'],
+  [AITextModel.CodeLlamaInstruct34B, 'Meta Code Llama Instruct (34B)'],
+  // [AITextModel.CodeLlamaInstruct70B, 'Meta Code Llama Instruct (70B)'],
+  [AITextModel.CodeLlamaInstruct7B, 'Meta Code Llama Instruct (7B)'],
+  [AITextModel.LLaMA2Chat70B, 'Meta LLaMA-2 Chat (70B)'],
+  [AITextModel.LLaMA2Chat13B, 'Meta LLaMA-2 Chat (13B)'],
+  [AITextModel.LLaMA2Chat7B, 'Meta LLaMA-2 Chat (7B)'],
+  [AITextModel.LLaMA3Chat8B, 'Meta LLaMA-3 Chat (8B)'],
+  [AITextModel.LLaMA3Chat70B, 'Meta LLaMA-3 Chat (70B)'],
+  [AITextModel.WizardLM2dash8x22B, 'Microsoft WizardLM-2 (8x22B)'],
   // [AITextModel.Mistral7BInstruct01, 'Mistral (7B) Instruct 0.1'],
   [AITextModel.Mistral7BInstruct02, 'Mistral (7B) Instruct 0.2'],
   [AITextModel.Mistral8x7BInstruct, 'Mistral 8x7B Instruct (46.7B)'],
+  [AITextModel.Mixtral8x22BInstruct141B, 'Mixtral-8x22B Instruct (141B)'],
   [AITextModel.NousCapybara7B, 'Nous Capybara v1.9 (7B)'],
   [AITextModel.NousHermes2MistralDPO7B, 'Nous Hermes 2 - Mistral DPO (7B)'],
   [AITextModel.NousHermes2Mistral8x7BDPO, 'Nous Hermes 2 - Mistral 8x7B-DPO (46.7B)'],
@@ -107,8 +115,8 @@ export const AITextModelList = new Map([
   [AITextModel.SnorkelMistralPairRMDPO7B, 'Snorkel Mistral PairRM DPO (7B)'],
   [AITextModel.TekniumOpenHermes2Mistral7B, 'Teknium OpenHermes-2-Mistral (7B)'],
   [AITextModel.TekniumOpenHermes2p5Mistral7B, 'Teknium OpenHermes-2.5-Mistral (7B)'],
-  // [AITextModel.TogetherLLaMA27B32KInstruct7B, 'Together	LLaMA-2-7B-32K-Instruct (7B)'],
-  // [AITextModel.TogetherRedPajamaINCITEChat3B, 'Together		RedPajama-INCITE Chat (3B)'],
+  // [AITextModel.TogetherLLaMA27B32KInstruct7B, 'Together LLaMA-2-7B-32K-Instruct (7B)'],
+  // [AITextModel.TogetherRedPajamaINCITEChat3B, 'Together RedPajama-INCITE Chat (3B)'],
   // [AITextModel.TogetherRedPajamaINCITEChat7B, 'Together RedPajama-INCITE Chat (7B)'],
   // [AITextModel.Undi95ReMMSLERPL213B, 'Undi95 ReMM SLERP L2 (13B)'],
   [AITextModel.Undi95ToppyM7B, 'Undi95 Toppy M (7B)'],
@@ -130,8 +138,8 @@ export enum AIImageModel {
 export const AIImageModelList = new Map([
   [AIImageModel.OpenAIDallE2, 'OpenAI DALL·E 2'],
   [AIImageModel.OpenAIDallE3, 'OpenAI DALL·E 3'],
-  [AIImageModel.Openjourney4, 'Prompt Hero	Openjourney v4'],
-  [AIImageModel.RunwayStableDiffusion, 'Runway ML	Stable Diffusion 1.5'],
+  [AIImageModel.Openjourney4, 'Prompt Hero Openjourney v4'],
+  [AIImageModel.RunwayStableDiffusion, 'Runway ML Stable Diffusion 1.5'],
   [AIImageModel.RealisticVision, 'Realistic Vision 3.0'],
   [AIImageModel.StableDiffusion2, 'Stable Diffusion 2.1'],
   [AIImageModel.StableDiffusionXL, 'Stable Diffusion XL 1.0'],
@@ -153,7 +161,7 @@ export enum Language {
   Russian = 'ru',
 }
 
-const getLangConfig = (lang: Language) => {
+const getLangConfig = (lang?: string) => {
   switch (lang) {
     case Language.Russian:
       return 'Отвечай на Русском языке.'
@@ -166,7 +174,7 @@ export const askGPT = async (options: StoryOptions, key: string) => {
   const client = options.model?.startsWith('gpt') ? getClient(key) : getClient(key, TOGETHER_AI_URL)
 
   try {
-    const systemMessage = `${options.systemMessage}\n${getLangConfig(options.lang || Language.English)}`
+    const systemMessage = `${options.systemMessage}\n${getLangConfig(options.lang)}`
 
     clog('System message', systemMessage)
     clog('PROMPT', options.prompt)

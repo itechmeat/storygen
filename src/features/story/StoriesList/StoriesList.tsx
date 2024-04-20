@@ -1,5 +1,6 @@
 import { FC } from 'react'
 import { Button, Result } from 'antd'
+import { useTranslation } from 'react-i18next'
 import { UUID } from '../../../types/common'
 import { StoryCard } from '../StoryCard/StoryCard'
 import { IStory } from '../type'
@@ -12,15 +13,17 @@ type Props = {
 }
 
 export const StoriesList: FC<Props> = ({ list, onStart, onStoryDelete }) => {
+  const { t } = useTranslation()
+
   if (!list.length) {
     return (
       <Result
         status="404"
-        title="No stories yet"
-        subTitle="You can create your first story"
+        title={t('notFound.stories.title')}
+        subTitle={t('notFound.stories.subTitle')}
         extra={
           <Button type="primary" onClick={onStart}>
-            Start writing
+            {t('notFound.stories.cta')}
           </Button>
         }
       />

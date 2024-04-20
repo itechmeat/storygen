@@ -1,34 +1,36 @@
-import { AITextModel, Language } from '../../api/gpt'
+import { AITextModel } from '../../api/gpt'
 import { UUID } from '../../types/common'
+import { Language } from '../localization/types'
 
 export enum StoryWriter {
-  Murakami = 'Haruki Murakami',
-  Orwell = 'George Orwell',
-  Kafka = 'Franz Kafka',
-  Nabokov = 'Vladimir Nabokov',
-  King = 'Stephen King',
-  LiuCixin = 'Liu Cixin',
+  Murakami = 'murakami',
+  Orwell = 'orwell',
+  Kafka = 'kafka',
+  Nabokov = 'nabokov',
+  King = 'king',
+  LiuCixin = 'liuCixin',
 }
 
 export enum StoryGenre {
-  Fantasy = 'Fantasy',
-  ScienceFiction = 'Science Fiction',
-  Mystery = 'Mystery',
-  Thriller = 'Thriller',
-  Romance = 'Romance',
-  HistoricalFiction = 'Historical Fiction',
-  YoungAdult = 'Young Adult',
-  Horror = 'Horror',
-  LiteraryFiction = 'Literary Fiction',
-  Memoir = 'Memoir',
+  Fantasy = 'fantasy',
+  ScienceFiction = 'scienceFiction',
+  LiteraryFiction = 'literaryFiction',
+  Mystery = 'mystery',
+  Horror = 'horror',
+  Thriller = 'thriller',
+  Detective = 'detective',
+  Romance = 'romance',
+  HistoricalFiction = 'historicalFiction',
+  Memoir = 'memoir',
 }
 
 export enum StoryAudience {
-  Children = 'Children',
-  Teenagers = 'Teenagers',
-  YoungAdults = 'Young Adults',
-  Adults = 'Adults',
-  MiddleGrade = 'Middle Grade',
+  Children = 'children',
+  Teenagers = 'teenagers',
+  YoungAdults = 'youngAdults',
+  Adults = 'adults',
+  MiddleGrade = 'middleGrade',
+  Seniors = 'seniors',
 }
 
 export type StoryOptions = {
@@ -50,6 +52,8 @@ export type IStory = StoryOptions & {
   summary_en: string
   sceneIds: UUID[]
   cover?: string
+  cover_text?: string
+  cover_text_en?: string
   response?: string
   names?: string[]
 }

@@ -13,7 +13,7 @@ type Props = {
 export const StoryCover: FC<Props> = ({ story, onGenerate }) => {
   const [isChanging, setIsChanging] = useState(false)
   const [isStarted, setIsStarted] = useState(false)
-  const [model, setModel] = useState<AIImageModel>(AIImageModel.AnalogDiffusion)
+  const [model, setModel] = useState<AIImageModel>(AIImageModel.RealisticVision)
 
   const handleSubmit = () => {
     setIsChanging(false)
