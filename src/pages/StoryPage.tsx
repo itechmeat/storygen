@@ -18,6 +18,26 @@ import {
   getWriterStyle,
 } from '../utils/story.utils'
 
+import { useCallback, useState } from 'react'
+import { useParams } from 'react-router-dom'
+import { v4 as uuidv4 } from 'uuid'
+import { Language, askGPT } from '../api/gpt'
+import { useSceneStore } from '../features/scene/sceneStore'
+import { IScene } from '../features/scene/type'
+import { Story } from '../features/story/Story/Story'
+import { useFetchAllStories } from '../features/story/hooks/fetch-stories.hook'
+import { useStoryStore } from '../features/story/storyStore'
+import { IStory } from '../features/story/type'
+import { clog } from '../utils/common.utils'
+import {
+  buildScenePrompt,
+  formatResponse,
+  getAudience,
+  getGenre,
+  getStoryTask,
+  getWriterStyle,
+} from '../utils/story.utils'
+
 export const StoryPage = () => {
   useFetchAllStories()
 
