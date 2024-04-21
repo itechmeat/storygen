@@ -1,6 +1,5 @@
-.footer {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: space-between;
-  margin-block: var(--space-big);
+.h2 {
+  @media (max-width: 800px) {
+    text-align: center;
+  }
 }

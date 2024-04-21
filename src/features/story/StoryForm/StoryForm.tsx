@@ -3,6 +3,7 @@ import { Button, Form, InputNumber, Select } from 'antd'
 import TextArea from 'antd/es/input/TextArea'
 import { useTranslation } from 'react-i18next'
 import { AITextModel, AITextModelList } from '../../../api/gpt'
+import { ActionBar } from '../../../components/ActionBar/ActionBar'
 import { IStory, StoryAudience, StoryGenre, StoryOptions, StoryWriter } from '../type'
 import styles from './StoryForm.module.scss'
 
@@ -99,11 +100,13 @@ export const StoryForm: FC<Props> = ({ story, onGenerate }) => {
           <InputNumber min={1} max={10} onChange={handleChangeScenes} />
         </Form.Item>
 
-        <Form.Item>
-          <Button type="primary" disabled={!prompt} onClick={handleSubmit}>
-            {t('StoryPage.generateScenes')}
-          </Button>
-        </Form.Item>
+        <ActionBar
+          actionStart={
+            <Button type="primary" disabled={!prompt} onClick={handleSubmit}>
+              {t('StoryPage.generateScenes')}
+            </Button>
+          }
+        />
       </Form>
     </div>
   )

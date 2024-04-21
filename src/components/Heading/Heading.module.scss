@@ -8,9 +8,19 @@
   &.centered {
     justify-content: center;
   }
+
+  @media (max-width: 800px) {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
 }
 
 .h1 {
   margin: 0;
   font-size: var(--font-title);
+
+  @media (max-width: 800px) {
+    flex: 0 0 100%;
+    text-align: center;
+  }
 }

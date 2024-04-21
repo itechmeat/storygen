@@ -2,6 +2,10 @@
   display: flex;
   align-items: center;
   gap: var(--space-base);
+
+  @media (max-width: 800px) {
+    justify-content: center;
+  }
 }
 
 .scene {

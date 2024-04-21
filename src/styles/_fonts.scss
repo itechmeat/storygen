@@ -14,6 +14,12 @@
   --font-medium: 500;
   --font-bold: 700;
   --font-black: 900;
+
+  @media (max-width: 800px) {
+    --font-bigger: 20px;
+    --font-large: 22px;
+    --font-title: 26px;
+  }
 }
 
 @import url('https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400..700;1,400..700&display=swap');

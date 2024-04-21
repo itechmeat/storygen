@@ -30,6 +30,11 @@
   display: flex;
   justify-content: flex-end;
   margin: var(--space-base) 0;
+
+  @media (max-width: 800px) {
+    justify-content: center;
+    text-align: center;
+  }
 }
 
 .genTitle {

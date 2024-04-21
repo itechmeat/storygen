@@ -1,0 +1,27 @@
+.generator {
+  margin: 0 0 var(--space-big);
+}
+
+.form {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-base);
+
+  @media (max-width: 800px) {
+    flex-direction: column;
+    justify-content: center;
+    gap: var(--space-small);
+    text-align: center;
+  }
+}
+
+.field {
+  margin: 0;
+}
+
+.process {
+  display: flex;
+  align-items: center;
+  gap: var(--space-base);
+}

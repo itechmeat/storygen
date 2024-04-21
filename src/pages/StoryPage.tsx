@@ -1,10 +1,11 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useCallback, useState } from 'react'
+import { useCallback, useMemo, useState } from 'react'
 import { Button, Result, notification } from 'antd'
 import { useTranslation } from 'react-i18next'
 import { useParams } from 'react-router-dom'
 import { v4 as uuidv4 } from 'uuid'
 import { AIImageModel, AITextModel, askAIStream, askGPT, askGPTImage } from '../api/gpt'
+import { StepProgress } from '../components/StepProgress/StepProgress'
 import { useSceneStore } from '../features/scene/sceneStore'
 import { IScene } from '../features/scene/type'
 import { Story } from '../features/story/Story/Story'
@@ -37,6 +38,7 @@ export const StoryPage = () => {
   const storyId = useParams().storyId
   const { getStoryById } = useStoryStore()
   const story = getStoryById(storyId)
+  console.log('🚀 ~ StoryPage ~ story:', story)
 
   const { getKey, requiredKey, setRequiredKey } = useCheckKeys()
 
@@ -49,6 +51,15 @@ export const StoryPage = () => {
   const formattedResponse = story?.response ? formatResponse(story?.response) : null
 
   const [api, contextHolder] = notification.useNotification()
+
+  const currentStep = useMemo(() => {
+    if (!story) return 0
+    if (story.cover) return 5
+    if (story.summary) return 4
+    if (story.sceneIds.length) return 3
+    if (story.response) return 2
+    return 1
+  }, [story])
 
   const openErrorNotification = (message: string, description?: string) => {
     api.error({
@@ -188,6 +199,8 @@ export const StoryPage = () => {
     }
 
     setIsStoryGenerating(false)
+
+    window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' })
   }
 
   const handleMetaGenerate = async (model: AITextModel, context: string) => {
@@ -222,6 +235,8 @@ export const StoryPage = () => {
     }
 
     setIsMetaGenerating(false)
+
+    window.scrollTo({ top: 0, behavior: 'smooth' })
 
     return response
   }
@@ -292,6 +307,8 @@ export const StoryPage = () => {
   return (
     <UserKeysProvider requiredKey={requiredKey} onOk={handleOk} onClose={handleCancel}>
       {contextHolder}
+      <StepProgress total={5} current={currentStep} />
+
       <Story
         story={story}
         generatedScene={generatedScene}

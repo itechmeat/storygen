@@ -1,6 +1,7 @@
 import { FC } from 'react'
 import { Button, Result } from 'antd'
 import { useTranslation } from 'react-i18next'
+import { ActionBar } from '../../../components/ActionBar/ActionBar'
 import { CompactShortScene } from '../type'
 import styles from './StoryResponse.module.scss'
 
@@ -40,12 +41,14 @@ export const StoryResponse: FC<Props> = ({ response, onCancel, onGenerate }) => 
         />
       )}
 
-      <footer className={styles.footer}>
-        <Button onClick={onCancel}>{t('StoryPage.regenerate')}</Button>
-        <Button type="primary" onClick={onGenerate}>
-          {t('StoryPage.generateFullStory')}
-        </Button>
-      </footer>
+      <ActionBar
+        actionStart={<Button onClick={onCancel}>{t('StoryPage.regenerate')}</Button>}
+        actionEnd={
+          <Button type="primary" onClick={onGenerate}>
+            {t('StoryPage.generateFullStory')}
+          </Button>
+        }
+      />
     </div>
   )
 }

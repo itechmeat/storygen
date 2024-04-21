@@ -1,0 +1,25 @@
+.progress {
+  --progress-gap: 4px;
+  position: sticky;
+  z-index: 100;
+  top: 2px;
+  display: flex;
+  justify-content: space-between;
+  gap: var(--progress-gap);
+  margin: 2px 0;
+
+  @media (max-width: 800px) {
+    margin-inline: calc(var(--space-base) * -1 + var(--progress-gap));
+  }
+}
+
+.step {
+  flex: 1;
+  height: 4px;
+  background-color: var(--color-primary);
+  opacity: 0.2;
+}
+
+.current {
+  opacity: 1;
+}
