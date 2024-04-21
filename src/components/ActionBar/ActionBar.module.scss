@@ -1,0 +1,30 @@
+.actions {
+  display: flex;
+  gap: var(--space-base);
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: var(--space-base);
+  margin: var(--space-base) 0;
+
+  &:first-child {
+    margin-block-start: 0;
+  }
+}
+
+.start,
+.end {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--space-base);
+}
+
+.actions,
+.start,
+.end {
+  @media (max-width: 800px) {
+    flex-direction: column;
+    justify-content: center;
+    text-align: center;
+  }
+}

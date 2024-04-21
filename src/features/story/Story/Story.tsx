@@ -2,6 +2,7 @@ import { FC, useCallback, useMemo } from 'react'
 import { UnorderedListOutlined } from '@ant-design/icons'
 import { Button, Dropdown, MenuProps } from 'antd'
 import { AIImageModel, AITextModel } from '../../../api/gpt'
+import { ActionBar } from '../../../components/ActionBar/ActionBar'
 import { Heading } from '../../../components/Heading/Heading'
 import { ScenesList } from '../../scene/ScenesList/ScenesList'
 import { useSceneStore } from '../../scene/sceneStore'
@@ -9,6 +10,7 @@ import { IScene } from '../../scene/type'
 import { StoryCover } from '../StoryCover/StoryCover'
 import { StoryForm } from '../StoryForm/StoryForm'
 import { StoryMeta } from '../StoryMeta/StoryMeta'
+import { StoryMetaForm } from '../StoryMetaForm/StoryMetaForm'
 import { StoryResponse } from '../StoryResponse/StoryResponse'
 import { StoryScenesActions } from '../StoryScenesActions/StoryScenesActions'
 import { CompactShortScene, IStory, StoryOptions } from '../type'
@@ -98,6 +100,7 @@ export const Story: FC<StoryProps> = ({
         placement="bottomRight"
         trigger={['click']}
         arrow={{ pointAtCenter: true }}
+        className={styles.nameSelector}
       >
         <Button icon={<UnorderedListOutlined />} />
       </Dropdown>
@@ -129,29 +132,40 @@ export const Story: FC<StoryProps> = ({
         </div>
       ) : (
         <>
-          {story.scenesNum === story.sceneIds.length && (
+          {story.scenesNum === story.sceneIds.length && story.summary && (
             <>
-              {story.summary && (
-                <StoryCover
-                  story={story}
-                  isGenerating={isCoverGenerating}
-                  onGenerate={onCoverGenerate}
-                />
-              )}
-              <StoryMeta
+              <StoryCover
                 story={story}
-                isGenerating={isMetaGenerating}
-                onGenerate={handleMetaGenerate}
+                isGenerating={isCoverGenerating}
+                onGenerate={onCoverGenerate}
               />
+              <StoryMeta story={story} isGenerating={isMetaGenerating} />
             </>
           )}
+
           <ScenesList
             list={scenesList}
             generatedScene={generatedScene}
             isStoryGenerating={isStoryGenerating && story.scenesNum !== story.sceneIds.length}
             isSummaryGenerating={isSummaryGenerating}
           />
-          {story.scenesNum === story.sceneIds.length && <StoryScenesActions story={story} />}
+
+          {!isStoryGenerating && (
+            <ActionBar
+              actionStart={
+                !story.summary && (
+                  <StoryMetaForm
+                    story={story}
+                    isGenerating={isMetaGenerating}
+                    onGenerate={handleMetaGenerate}
+                  />
+                )
+              }
+              actionEnd={
+                story.scenesNum === story.sceneIds.length && <StoryScenesActions story={story} />
+              }
+            />
+          )}
         </>
       )}
     </article>

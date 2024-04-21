@@ -5,7 +5,6 @@ import { useTranslation } from 'react-i18next'
 import { useSceneStore } from '../../scene/sceneStore'
 import { useStoryStore } from '../storyStore'
 import { IStory } from '../type'
-import styles from './StoryScenesActions.module.scss'
 
 type Props = {
   story: IStory
@@ -31,10 +30,8 @@ export const StoryScenesActions: FC<Props> = ({ story }) => {
   }
 
   return (
-    <div className={styles.actions}>
-      <Button danger icon={<DeleteOutlined />} onClick={removeScenes}>
-        {t('StoryPage.removeScenes')}
-      </Button>
-    </div>
+    <Button danger icon={<DeleteOutlined />} onClick={removeScenes}>
+      {t('StoryPage.removeScenes')}
+    </Button>
   )
 }

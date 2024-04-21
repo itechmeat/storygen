@@ -4,7 +4,8 @@
   justify-content: center;
   position: relative;
   width: 400px;
-  height: 400px;
+  max-width: 100%;
+  aspect-ratio: 1 / 1;
   margin: 0 auto var(--space-big);
   background: var(--color-border);
 }

@@ -7,3 +7,9 @@
 .nameOption {
   display: flex;
 }
+
+.nameSelector {
+  @media (max-width: 800px) {
+    margin-inline-start: auto;
+  }
+}

@@ -5,19 +5,18 @@ import { Header } from 'antd/es/layout/layout'
 import { MenuInfo } from 'rc-menu/lib/interface'
 import { useTranslation } from 'react-i18next'
 import { NavLink, useLocation, useNavigate } from 'react-router-dom'
-import { useWindowSize } from 'react-use'
 import { clearDatabase } from '../../../api/db'
 import LogoIcon from '../../../assets/images/logo.svg'
 import { Container } from '../../../components/Container/Container'
 import { LanguageSelector } from '../../localization/LanguageSelector/LanguageSelector'
+import { useMedia } from '../hooks/media.hook'
 import styles from './Headline.module.scss'
 
 export const Headline: FC<PropsWithChildren> = () => {
   const { t } = useTranslation()
   const navigate = useNavigate()
   const { pathname } = useLocation()
-
-  const { width } = useWindowSize()
+  const { isMobile } = useMedia()
 
   const items = [
     {
@@ -67,7 +66,7 @@ export const Headline: FC<PropsWithChildren> = () => {
           cancelText={t('actions.no')}
           onConfirm={clearDatabase}
         >
-          {width > 800 ? (
+          {!isMobile ? (
             <Button icon={<DeleteOutlined />}>
               <span className={styles.clearText}>{t('actions.clearDatabase')}</span>
             </Button>

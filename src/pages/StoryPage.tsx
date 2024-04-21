@@ -188,6 +188,8 @@ export const StoryPage = () => {
     }
 
     setIsStoryGenerating(false)
+
+    window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' })
   }
 
   const handleMetaGenerate = async (model: AITextModel, context: string) => {
@@ -222,6 +224,8 @@ export const StoryPage = () => {
     }
 
     setIsMetaGenerating(false)
+
+    window.scrollTo({ top: 0, behavior: 'smooth' })
 
     return response
   }
